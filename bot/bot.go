@@ -2,6 +2,9 @@ package bot
 
 import (
 	"fmt"
+	"fund/config"
+	"fund/cryptoc"
+	"fund/data"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
 )
@@ -12,7 +15,7 @@ func Bot()  {
 }
 
 func run()  {
-	bot, err := tgbotapi.NewBotAPI("1215007591:AAEIFtHy4V4WWuxeviR2Q1V4-M-LMZTXKUw")
+	bot, err := tgbotapi.NewBotAPI(config.TelegramBotAPIToken)
 	if err != nil {
 		log.Panic()
 	}
@@ -31,18 +34,22 @@ func run()  {
 			continue
 		}
 
+		var reply string
 		switch update.Message.Text {
 		case "fund":
-			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "实时基金涨跌")
-			msg.ReplyToMessageID = update.Message.MessageID
-			bot.Send(msg)
+			reply = data.RealTimeFundReply()
+		case "bitcoin":
+			reply = cryptoc.GetBtcUSDReply()
+		default:
+			reply = "暂时无法理解： "+update.Message.Text
 		}
 
-		log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
+		msg := tgbotapi.NewMessage(update.Message.Chat.ID, reply)
+		msg.ReplyToMessageID = update.Message.MessageID
+		msg.ParseMode = tgbotapi.ModeHTML
+		//msg.ParseMode = tgbotapi.ModeMarkdown
+		bot.Send(msg)
 
-		//msg := tgbotapi.NewMessage(update.Message.Chat.ID, update.Message.Text)
-		//msg.ReplyToMessageID = update.Message.MessageID
-		//
-		//bot.Send(msg)
+		log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
 	}
 }

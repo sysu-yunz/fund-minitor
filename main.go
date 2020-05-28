@@ -1,19 +1,18 @@
 package main
 
-import (
-	"fund/config"
-	"fund/data"
-)
+import "fund/bot"
 
 func main() {
-	/*
-
-	 */
+	// TODO: Email
 	//e := &email.Email{
 	//	To: "dukeyunz@hotmail.com",
 	//	Subject: "Fund notification",
 	//}
-	//
+
+	// TODO: Bot
+	bot.Bot()
+
+	// TODO: Monthly history
 	//fundCode := "161716"
 	//monthProfitRate := profit.MonthProfitRate(fundCode)
 	//if monthProfitRate > 0.01 {
@@ -22,13 +21,14 @@ func main() {
 	//	e.Send(fmt.Sprintf("hello, it's good time to buy, last 20 workday profit rate: %.2f%% !", monthProfitRate*100.0))
 	//}
 
-	/*
-	Real time fund data
-	 */
-	watchFunds := config.GetWatches()
-	for _, f := range watchFunds {
-		data.GetRealTime(f)
-	}
+	// TODO: Real time fund data
+	//watchFunds := config.GetWatches()
+	//for _, f := range watchFunds {
+	//	data.GetRealTime(f)
+	//}
 
-	//bot.Bot()
+	// TODO: BTC Price
+	//cryptoc.GetBtcUSD()
+
+	// TODO: Prepare money for upcoming repayment
 }
