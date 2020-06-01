@@ -5,6 +5,10 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"fund/cryptoc"
+	"fund/data"
+	"fund/log"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"net/http"
 	"os"
 )
@@ -35,54 +39,51 @@ type Chat struct {
 	Type      string `json:"type"`
 }
 
-
 func Handler(w http.ResponseWriter, req *http.Request) {
-	handle(w, req)
-}
-
-func handle(w http.ResponseWriter, req *http.Request)  {
-	body := &ReqBody{}
-	if err := json.NewDecoder(req.Body).Decode(body); err != nil {
-		fmt.Println("could not decode request body", err)
-		return
-	}
-
-	if err := sayPolo(body.Message.Chat.ID); err != nil {
-		fmt.Println("error in sending reply:", err)
-		return
-	}
-
-	// log a confirmation message if the message is sent successfully
-	fmt.Fprintf(w, "reply sent")
-}
-
-type sendMessageReqBody struct {
-	ChatID int    `json:"chat_id"`
-	Text   string `json:"text"`
-}
-
-// sayPolo takes a chatID and sends "polo" to them
-func sayPolo(chatID int) error {
-	// Create the request body struct
-	reqBody := &sendMessageReqBody{
-		ChatID: chatID,
-		Text:   "Hello",
-	}
-	// Create the JSON body from the struct
-	reqBytes, err := json.Marshal(reqBody)
+	bot, err := tgbotapi.NewBotAPI(os.Getenv("BOT_TOKEN"))
 	if err != nil {
-		return err
+		log.Fatal("Init Bot error: ", err)
 	}
 
-	// Send a post request with your token
-	reqURL := fmt.Sprintf("https://api.telegram.org/bot%v/sendMessage", os.Getenv("BOT_TOKEN"))
-	res, err := http.Post(reqURL, "application/json", bytes.NewBuffer(reqBytes))
+	bot.Debug = true
+
+	log.Debug("Authorized on account %s", bot.Self.UserName)
+
+	//_, err = bot.SetWebhook(tgbotapi.NewWebhookWithCert("https://www.google.com:8443/"+bot.Token, "cert.pem"))
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	info, err := bot.GetWebhookInfo()
 	if err != nil {
-		return err
-	}
-	if res.StatusCode != http.StatusOK {
-		return errors.New("unexpected status" + res.Status)
+		log.Fatal("Webhook info: %v", err)
 	}
 
-	return nil
+	if info.LastErrorDate != 0 {
+		log.Debug("Telegram callback failed: %s", info.LastErrorMessage)
+	}
+
+	updates := bot.ListenForWebhook("/" + bot.Token)
+	for update := range updates {
+		if update.Message == nil { // ignore any non-Message Updates
+			continue
+		}
+
+		var reply string
+		switch update.Message.Text {
+		case "fund":
+			reply = data.RealTimeFundReply()
+		case "bitcoin":
+			reply = cryptoc.GetBtcUSDReply()
+		default:
+			reply = "暂时无法理解： "+update.Message.Text
+		}
+
+		msg := tgbotapi.NewMessage(update.Message.Chat.ID, reply)
+		msg.ReplyToMessageID = update.Message.MessageID
+		msg.ParseMode = tgbotapi.ModeHTML
+		//msg.ParseMode = tgbotapi.ModeMarkdown
+		bot.Send(msg)
+
+		log.Debug("[%s] %s", update.Message.From.UserName, update.Message.Text)
+	}
 }
