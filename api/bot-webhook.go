@@ -27,8 +27,11 @@ func handler(w http.ResponseWriter, r *http.Request) UpdatesChannel {
 	ch := make(chan Update, BotAPI{}.Buffer)
 	bytes, _ := ioutil.ReadAll(r.Body)
 	var update Update
-	json.Unmarshal(bytes, &update)
-	log.Debug("Update: ", update)
+	err := json.Unmarshal(bytes, &update)
+	if err != nil {
+		log.Error("Unmarshal update: ", err)
+	}
+	log.Debug("Update: %+v %+v", update.Message.Text, update)
 	ch <- update
 
 	return ch
