@@ -23,7 +23,7 @@ func init()  {
 	log.Debug("Authorized on account %s", bot.Self.UserName)
 }
 
-func handler(w http.ResponseWriter, r *http.Request) UpdatesChannel {
+func handler(w http.ResponseWriter, r *http.Request)  {
 	ch := make(chan Update, BotAPI{}.Buffer)
 	bytes, _ := ioutil.ReadAll(r.Body)
 	var update Update
@@ -34,13 +34,8 @@ func handler(w http.ResponseWriter, r *http.Request) UpdatesChannel {
 	log.Debug("Update: %+v %+v", update.Message.Text, update)
 	ch <- update
 
-	return ch
-}
-
-func Handler(w http.ResponseWriter, req *http.Request) {
-	updates := handler(w, req)
 	go func() {
-		for update := range updates {
+		for update := range ch {
 			if update.Message == nil { // ignore any non-Message Updates
 				continue
 			}
@@ -65,4 +60,8 @@ func Handler(w http.ResponseWriter, req *http.Request) {
 			log.Debug("[%s] %s", update.Message.From.UserName, update.Message.Text)
 		}
 	}()
+}
+
+func Handler(w http.ResponseWriter, req *http.Request) {
+	handler(w, req)
 }
