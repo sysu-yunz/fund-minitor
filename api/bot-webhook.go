@@ -11,14 +11,9 @@ import (
 	"os"
 )
 
-var bot *BotAPI
+var bot, _ = NewBotAPI(os.Getenv("BOT_TOKEN"))
 
 func init() {
-	bot, err := NewBotAPI(os.Getenv("BOT_TOKEN"))
-	if err != nil {
-		log.Fatal("Init Bot error: ", err)
-	}
-
 	bot.Debug = true
 	log.Debug("Authorized on account %s", bot.Self.UserName)
 }
