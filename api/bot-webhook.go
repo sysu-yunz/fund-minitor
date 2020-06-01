@@ -55,6 +55,7 @@ func Handler(w http.ResponseWriter, req *http.Request) {
 				reply = "暂时无法理解： "+update.Message.Text
 			}
 
+			log.Debug("Reply to update: %+v %+v", update.Message.Text, update)
 			msg := NewMessage(update.Message.Chat.ID, reply)
 			msg.ReplyToMessageID = update.Message.MessageID
 			msg.ParseMode = ModeHTML
