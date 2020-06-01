@@ -28,6 +28,7 @@ func handler(w http.ResponseWriter, r *http.Request) UpdatesChannel {
 	bytes, _ := ioutil.ReadAll(r.Body)
 	var update Update
 	json.Unmarshal(bytes, &update)
+	log.Debug("Update: ", update)
 	ch <- update
 
 	return ch
