@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"fund/config"
 	"net/http"
 	"os"
 )
@@ -38,7 +37,7 @@ type Chat struct {
 
 
 func Handler(w http.ResponseWriter, req *http.Request) {
-	fmt.Fprintf(w, "prodEnv: %v", os.Getenv("BOT_TOKEN"))
+	handle(w, req)
 }
 
 func handle(w http.ResponseWriter, req *http.Request)  {
@@ -67,7 +66,7 @@ func sayPolo(chatID int) error {
 	// Create the request body struct
 	reqBody := &sendMessageReqBody{
 		ChatID: chatID,
-		Text:   "Polo!!",
+		Text:   "Hello",
 	}
 	// Create the JSON body from the struct
 	reqBytes, err := json.Marshal(reqBody)
@@ -76,7 +75,7 @@ func sayPolo(chatID int) error {
 	}
 
 	// Send a post request with your token
-	reqURL := fmt.Sprintf("https://api.telegram.org/bot%v/sendMessage", config.TelegramBotAPIToken)
+	reqURL := fmt.Sprintf("https://api.telegram.org/bot%v/sendMessage", os.Getenv("BOT_TOKEN"))
 	res, err := http.Post(reqURL, "application/json", bytes.NewBuffer(reqBytes))
 	if err != nil {
 		return err
