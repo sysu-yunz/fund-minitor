@@ -38,7 +38,7 @@ type Chat struct {
 
 
 func Handler(w http.ResponseWriter, req *http.Request) {
-	fmt.Fprintf(w, os.Getenv("BOT_TOKEN"))
+	fmt.Fprintf(w, "prodEnv: %v", os.Getenv("BOT_TOKEN"))
 }
 
 func handle(w http.ResponseWriter, req *http.Request)  {
