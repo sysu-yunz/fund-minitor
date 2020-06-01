@@ -3,8 +3,8 @@ package email
 import (
 	"crypto/tls"
 	"fmt"
+	"fund/config"
 	"fund/log"
-	"fund/util"
 	"gopkg.in/gomail.v2"
 	"net/smtp"
 )
@@ -21,7 +21,7 @@ func (e *Email) Send(info string) error {
 }
 
 func (e *Email) sendEmailV2(info string) {
-	pwd := util.ViperEnvVariable("EMAIL_PWD")
+	pwd := config.ViperEnvVariable("EMAIL_PWD")
 	d := gomail.NewDialer("smtp.qq.com", 25, "dukeyunz@foxmail.com", pwd)
 
 	msg := gomail.NewMessage()

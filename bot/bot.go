@@ -2,9 +2,9 @@ package bot
 
 import (
 	"fmt"
+	"fund/config"
 	"fund/cryptoc"
 	"fund/data"
-	"fund/util"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"log"
 )
@@ -15,7 +15,7 @@ func Bot()  {
 }
 
 func run()  {
-	tgBotToken := util.ViperEnvVariable("BOT_TOKEN")
+	tgBotToken := config.ViperEnvVariable("BOT_TOKEN")
 	bot, err := tgbotapi.NewBotAPI(tgBotToken)
 	if err != nil {
 		log.Panic()
