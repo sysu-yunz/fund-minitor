@@ -45,19 +45,6 @@ func Handler(w http.ResponseWriter, req *http.Request) {
 
 	log.Debug("Authorized on account %s", bot.Self.UserName)
 
-	//_, err = bot.SetWebhook(tgbotapi.NewWebhookWithCert("https://www.google.com:8443/"+bot.Token, "cert.pem"))
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-	info, err := bot.GetWebhookInfo()
-	if err != nil {
-		log.Fatal("Webhook info: %v", err)
-	}
-
-	if info.LastErrorDate != 0 {
-		log.Debug("Telegram callback failed: %s", info.LastErrorMessage)
-	}
-
 	updates := bot.ListenForWebhook("/" + bot.Token)
 	for update := range updates {
 		if update.Message == nil { // ignore any non-Message Updates
