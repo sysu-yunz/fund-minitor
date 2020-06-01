@@ -35,28 +35,29 @@ func handler(w http.ResponseWriter, r *http.Request) UpdatesChannel {
 
 func Handler(w http.ResponseWriter, req *http.Request) {
 	updates := handler(w, req)
+	go func() {
+		for update := range updates {
+			if update.Message == nil { // ignore any non-Message Updates
+				continue
+			}
 
-	for update := range updates {
-		if update.Message == nil { // ignore any non-Message Updates
-			continue
+			var reply string
+			switch update.Message.Text {
+			case "fund":
+				reply = data.RealTimeFundReply()
+			case "bitcoin":
+				reply = cryptoc.GetBtcUSDReply()
+			default:
+				reply = "暂时无法理解： "+update.Message.Text
+			}
+
+			msg := NewMessage(update.Message.Chat.ID, reply)
+			msg.ReplyToMessageID = update.Message.MessageID
+			msg.ParseMode = ModeHTML
+			//msg.ParseMode = tgbotapi.ModeMarkdown
+			bot.Send(msg)
+
+			log.Debug("[%s] %s", update.Message.From.UserName, update.Message.Text)
 		}
-
-		var reply string
-		switch update.Message.Text {
-		case "fund":
-			reply = data.RealTimeFundReply()
-		case "bitcoin":
-			reply = cryptoc.GetBtcUSDReply()
-		default:
-			reply = "暂时无法理解： "+update.Message.Text
-		}
-
-		msg := NewMessage(update.Message.Chat.ID, reply)
-		msg.ReplyToMessageID = update.Message.MessageID
-		msg.ParseMode = ModeHTML
-		//msg.ParseMode = tgbotapi.ModeMarkdown
-		bot.Send(msg)
-
-		log.Debug("[%s] %s", update.Message.From.UserName, update.Message.Text)
-	}
+	}()
 }
