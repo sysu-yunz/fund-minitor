@@ -17,11 +17,16 @@ func RealTimeFundReply() string {
 
 	var reply [][]string
 
+	ch := make(chan realTimeRaw, len(watchFunds))
+
 	for _, f := range watchFunds {
-		raw := getRealTime(f)
-		reply = append(reply, []string{raw.Fundcode, raw.Gszzl, raw.Name})
+		go getRealTime(f, ch)
 	}
 
+	for range watchFunds {
+		raw := <-ch
+		reply = append(reply, []string{raw.Fundcode, raw.Gszzl, raw.Name})
+	}
 
 	tableString := &strings.Builder{}
 	table := tb.NewWriter(tableString)
@@ -39,7 +44,7 @@ func RealTimeFundReply() string {
 	//return "```"+tableString.String()+"```"
 }
 
-func getRealTime(fundCode string) realTimeRaw {
+func getRealTime(fundCode string, ch chan realTimeRaw) {
 	url := fmt.Sprintf("http://fundgz.1234567.com.cn/js/%v.js", fundCode)
 	method := "GET"
 
@@ -55,17 +60,17 @@ func getRealTime(fundCode string) realTimeRaw {
 
 	//fmt.Println(string(body))
 
-	r, _ := regexp.Compile(`\((.*?)\)`)
+	r, _ := regexp.Compile(`\((.*)\)`)
 	//fmt.Println(r.MatchString(string(body)))
 	s := r.FindStringSubmatch(string(body))
 
 	realTimeData := realTimeRaw{}
 	err = json.Unmarshal([]byte(s[1]), &realTimeData)
 	if err != nil {
-		log.Error("Unmarshal failed! ", err)
+		log.Error("%+v Unmarshal failed! %+v %+v", fundCode, err, s[1])
 	}
 
-	return realTimeData
+	ch <- realTimeData
 }
 
 type realTimeRaw struct {

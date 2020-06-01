@@ -14,12 +14,12 @@ import (
 func GetBtcUSDReply() string {
 	var reply [][]string
 	btc := getBitcoin().Data[0]
-	quote := btc.Quote.USD
+	q := btc.Quote.USD
 
 	reply = append(reply, []string{"Name", btc.Name})
-	reply = append(reply, []string{"Price", fmt.Sprintf("%.3f", quote.Price)})
-	reply = append(reply, []string{"Change1H", fmt.Sprintf("%.3f%%", quote.PercentChange1H)})
-	reply = append(reply, []string{"Change24H", fmt.Sprintf("%.3f%%", quote.PercentChange24H)})
+	reply = append(reply, []string{"Price", fmt.Sprintf("%.3f", q.Price)})
+	reply = append(reply, []string{"Change1H", fmt.Sprintf("%.3f%%", q.PercentChange1H)})
+	reply = append(reply, []string{"Change24H", fmt.Sprintf("%.3f%%", q.PercentChange24H)})
 
 	tableString := &strings.Builder{}
 	table := tb.NewWriter(tableString)
