@@ -47,6 +47,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 	msg.ReplyToMessageID = update.Message.MessageID
 	msg.ParseMode = ModeHTML
 	//msg.ParseMode = tgbotapi.ModeMarkdown
+	log.Debug("Bot Token: %+v", bot.Token)
 	bot.Send(msg)
 
 	log.Debug("[%s] %s", update.Message.From.UserName, update.Message.Text)
