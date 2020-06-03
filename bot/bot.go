@@ -30,6 +30,6 @@ func run()  {
 	updates, err := bot.GetUpdatesChan(u)
 
 	for update := range updates {
-		go command.Command(bot, update)
+		command.Command(bot, update)
 	}
 }
