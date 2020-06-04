@@ -1,3 +1,4 @@
 fund - 获取基金信息
 bitcoin - 获取比特币信息
 index - 获取指数信息
+bond - 获取中国国债信息

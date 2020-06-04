@@ -1,6 +1,9 @@
 package main
 
-import "fund/bot"
+import (
+	"fund/config"
+	"fund/db"
+)
 
 func main() {
 	// TODO: Email
@@ -9,8 +12,11 @@ func main() {
 	//	Subject: "Fund notification",
 	//}
 
+	pwd := config.ViperEnvVariable("MGO_PWD")
+	db.NewDB(pwd)
+
 	// TODO: Bot
-	bot.Bot()
+	//bot.Bot()
 
 	// TODO: Monthly history
 	//fundCode := "161716"

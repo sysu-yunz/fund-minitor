@@ -1,26 +1,33 @@
 package handler
 
 import (
+	"context"
 	"encoding/json"
 	"fund/command"
+	"fund/db"
 	"fund/log"
+	"github.com/globalsign/mgo/bson"
 	. "github.com/go-telegram-bot-api/telegram-bot-api"
 	"io/ioutil"
 	"net/http"
 	"os"
 )
 
-var bot, _ = NewBotAPI(os.Getenv("BOT_TOKEN"))
+func Handler(w http.ResponseWriter, req *http.Request) {
+	bot, err := NewBotAPI(os.Getenv("BOT_TOKEN"))
+	if err != nil {
+		log.Error("Init Bot %+v", err)
+	}
 
-func init() {
 	bot.Debug = true
 	log.Debug("Authorized on account %s", bot.Self.UserName)
-}
 
-func Handler(w http.ResponseWriter, req *http.Request) {
+	dBase := db.NewDB(os.Getenv("MGO_PWD"))
+	dBase.ListDatabaseNames(context.TODO(), bson.M{})
+
 	bytes, _ := ioutil.ReadAll(req.Body)
 	var update Update
-	err := json.Unmarshal(bytes, &update)
+	err = json.Unmarshal(bytes, &update)
 	if err != nil {
 		log.Error("Unmarshal update: ", err)
 	}

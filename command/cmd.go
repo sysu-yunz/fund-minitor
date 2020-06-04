@@ -31,12 +31,6 @@ func Command(bot *tgbotapi.BotAPI, update tgbotapi.Update)  {
 	msg.ReplyToMessageID = update.Message.MessageID
 	msg.ParseMode = tgbotapi.ModeHTML
 	//msg.ParseMode = tgbotapi.ModeMarkdown
-	log.Debug("Bot Token: %+v", bot.Token)
 	bot.Send(msg)
-
-
-	msg2 := tgbotapi.NewMessage(update.Message.Chat.ID+1, "this is test msg")
-	bot.Send(msg2)
-
 	log.Debug("[%s] %s", update.Message.From.UserName, update.Message.Text)
 }

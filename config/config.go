@@ -33,7 +33,6 @@ func ViperEnvVariable(key string) string {
 }
 
 func GetWatches() []string {
-	return strings.Split(WatchFund, "-")
-}
 
-const WatchFund = "270042-110003-110023-000854-006223-162703-001592-161725-675011-110007-002351-161716-000311-240014"
+	return strings.Split("", "-")
+}
