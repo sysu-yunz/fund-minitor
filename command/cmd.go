@@ -3,12 +3,13 @@ package command
 import (
 	"fund/cryptoc"
 	"fund/data"
+	"fund/global"
 	"fund/log"
 	"fund/watch"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
-func Command(bot *tgbotapi.BotAPI, update tgbotapi.Update)  {
+func Command(update tgbotapi.Update)  {
 	var reply string
 	switch update.Message.Text {
 	case "/fund_watch":
@@ -31,6 +32,6 @@ func Command(bot *tgbotapi.BotAPI, update tgbotapi.Update)  {
 	msg.ReplyToMessageID = update.Message.MessageID
 	msg.ParseMode = tgbotapi.ModeHTML
 	//msg.ParseMode = tgbotapi.ModeMarkdown
-	bot.Send(msg)
+	global.Bot.Send(msg)
 	log.Debug("[%s] %s", update.Message.From.UserName, update.Message.Text)
 }
