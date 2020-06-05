@@ -3,7 +3,7 @@ package data
 import (
 	"encoding/json"
 	"fmt"
-	"fund/config"
+	"fund/global"
 	"fund/log"
 	tb "github.com/olekukonko/tablewriter"
 	"io/ioutil"
@@ -12,15 +12,15 @@ import (
 	"strings"
 )
 
-func RealTimeFundReply() string {
-	watchFunds := config.GetWatches()
+func RealTimeFundReply(chatID int64) string {
+	watchFunds := global.MgoDB.GetWatchList(chatID)
 
 	var reply [][]string
 
 	ch := make(chan realTimeRaw, len(watchFunds))
 
 	for _, f := range watchFunds {
-		go getRealTime(f, ch)
+		go getRealTime(f.Watch, ch)
 	}
 
 	for range watchFunds {

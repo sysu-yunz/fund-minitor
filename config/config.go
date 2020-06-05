@@ -3,7 +3,6 @@ package config
 import (
 	"github.com/spf13/viper"
 	"log"
-	"strings"
 )
 
 // use viper package to read .env file
@@ -30,9 +29,4 @@ func ViperEnvVariable(key string) string {
 	}
 
 	return value
-}
-
-func GetWatches() []string {
-
-	return strings.Split("", "-")
 }

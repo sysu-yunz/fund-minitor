@@ -38,5 +38,5 @@ func Handler(w http.ResponseWriter, req *http.Request) {
 	}
 	log.Debug("Update: %+v %+v", update.Message.Text, update)
 
-	command.Command(update)
+	command.Handle(update)
 }

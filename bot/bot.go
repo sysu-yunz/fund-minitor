@@ -17,7 +17,7 @@ func Run()  {
 	}
 
 	for update := range updates {
-		command.Command(update)
+		command.Handle(update)
 	}
 }
 

@@ -1,11 +1,11 @@
 package global
 
 import (
+	"fund/db"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
 var (
 	Bot *tgbotapi.BotAPI
-	MgoDB *mongo.Client
+	MgoDB *db.MgoC
 )
