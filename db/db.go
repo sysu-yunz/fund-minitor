@@ -16,7 +16,7 @@ type MgoC struct {
 
 func NewDB(pwd string) *MgoC {
 	uri := "mongodb+srv://chengqian"+":"+pwd+"@cluster0-01hyt.azure.mongodb.net/fund?retryWrites=true&w=majority"
-
+	//uri := "mongodb://127.0.0.1:27017"
 	ctx := context.TODO()
 	clientOptions := options.Client().ApplyURI(uri)
 
@@ -74,6 +74,20 @@ func (c *MgoC) InsertWatch(chatID int64, w string) {
 	}
 
 	log.Debug("Inserted watch %+v ", res)
+}
+
+func (c *MgoC) DeleteWatch(chatID int64, w string) {
+	col := c.Database("fund").Collection("watch")
+	res, err := col.DeleteOne(context.TODO(), WatchDB{
+		ChatID: chatID,
+		Watch:  w,
+	})
+
+	if err != nil {
+		log.Error("Deleting watch %+v ", err)
+	}
+
+	log.Debug("Deleted watch %+v ", res)
 }
 
 func (c *MgoC) GetWatchList(chatID int64) []WatchDB {

@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"fund/global"
 	"fund/log"
+	r "fund/reply"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	tb "github.com/olekukonko/tablewriter"
 	"io/ioutil"
 	"net/http"
@@ -12,7 +14,8 @@ import (
 	"strings"
 )
 
-func RealTimeFundReply(chatID int64) string {
+func RealTimeFundReply(update tgbotapi.Update) {
+	chatID := update.Message.Chat.ID
 	watchFunds := global.MgoDB.GetWatchList(chatID)
 
 	var reply [][]string
@@ -40,11 +43,13 @@ func RealTimeFundReply(chatID int64) string {
 
 	table.Render()
 
-	return "<pre>"+tableString.String()+"</pre>"
+	r.TextReply(update, "<pre>"+tableString.String()+"</pre>")
 	//return "```"+tableString.String()+"```"
 }
 
 func getRealTime(fundCode string, ch chan realTimeRaw) {
+	realTimeData := realTimeRaw{Fundcode: fundCode}
+
 	url := fmt.Sprintf("http://fundgz.1234567.com.cn/js/%v.js", fundCode)
 	method := "GET"
 
@@ -56,18 +61,25 @@ func getRealTime(fundCode string, ch chan realTimeRaw) {
 	}
 	res, err := client.Do(req)
 	defer res.Body.Close()
-	body, err := ioutil.ReadAll(res.Body)
+	if res != nil && res.StatusCode == http.StatusOK {
+		body, err := ioutil.ReadAll(res.Body)
 
-	//fmt.Println(string(body))
+		log.Debug("Real time data resp %+v", string(body))
 
-	r, _ := regexp.Compile(`\((.*)\)`)
-	//fmt.Println(r.MatchString(string(body)))
-	s := r.FindStringSubmatch(string(body))
+		r, _ := regexp.Compile(`\((.*)\)`)
+		//fmt.Println(r.MatchString(string(body)))
+		s := r.FindStringSubmatch(string(body))
 
-	realTimeData := realTimeRaw{}
-	err = json.Unmarshal([]byte(s[1]), &realTimeData)
-	if err != nil {
-		log.Error("%+v Unmarshal failed! %+v %+v", fundCode, err, s[1])
+		err = json.Unmarshal([]byte(s[1]), &realTimeData)
+		if err != nil {
+			log.Error("Realtime data of %+v Unmarshal failed! %+v %+v", fundCode, err, s[1])
+			fdb, _ := global.MgoDB.ValidFundCode(fundCode)
+			realTimeData.Name = fdb.FundName
+		}
+	} else {
+		log.Error("Http response %+v ", res)
+		fdb, _ := global.MgoDB.ValidFundCode(fundCode)
+		realTimeData.Name = fdb.FundName
 	}
 
 	ch <- realTimeData
