@@ -6,9 +6,10 @@ import (
 )
 
 func FundWatch(update tgbotapi.Update) string  {
+	chatID := update.Message.Chat.ID
 	arguments := update.Message.CommandArguments()
 	if f, ok := global.MgoDB.ValidFundCode(arguments); ok {
-		if !global.MgoDB.FundWatched(arguments) {
+		if !global.MgoDB.FundWatched(chatID, arguments) {
 			global.MgoDB.InsertWatch(update.Message.Chat.ID, arguments)
 			return f.FundName+"\n"+f.FundType
 		} else {

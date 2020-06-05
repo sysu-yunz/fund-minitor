@@ -52,9 +52,9 @@ func (c *MgoC) ValidFundCode(w string) (FundInfoDB, bool) {
 	return fund, true
 }
 
-func (c *MgoC) FundWatched(w string)  bool {
+func (c *MgoC) FundWatched(cid int64, w string)  bool {
 	col := c.Database("fund").Collection("watch")
-	count, err := col.CountDocuments(context.TODO(), bson.M{"watch":w})
+	count, err := col.CountDocuments(context.TODO(), bson.M{"chatID":cid, "watch":w})
 	if err != nil {
 		log.Error("Fund watch count %+v", err)
 	}
