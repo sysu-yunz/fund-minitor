@@ -25,9 +25,9 @@ func Handle(update tgbotapi.Update) {
 			case "fund":
 				data.RealTimeFundReply(update)
 			case "bitcoin":
-				cryptoc.GetBtcUSDReply()
+				cryptoc.GetBtcUSDReply(update)
 			case "index":
-				data.GlobalIndexReply()
+				data.GlobalIndexReply(update)
 			case "bond":
 				data.BondReply(update)
 			default:

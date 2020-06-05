@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"fund/log"
+	r "fund/reply"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	tb "github.com/olekukonko/tablewriter"
 	"io/ioutil"
 	"net/http"
@@ -11,7 +13,7 @@ import (
 	"time"
 )
 
-func GetBtcUSDReply() string {
+func GetBtcUSDReply(update tgbotapi.Update) {
 	var reply [][]string
 	btc := getBitcoin().Data[0]
 	q := btc.Quote.USD
@@ -34,14 +36,14 @@ func GetBtcUSDReply() string {
 
 	table.Render()
 
-	return "<pre>"+tableString.String()+"</pre>"
+	r.TextReply(update, "<pre>"+tableString.String()+"</pre>")
 }
 
 func getBitcoin() BitcoinRaw {
 	url := "https://web-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?limit=6&start=1"
 	method := "GET"
 
-	client := &http.Client {}
+	client := &http.Client{}
 	req, err := http.NewRequest(method, url, nil)
 
 	if err != nil {
