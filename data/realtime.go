@@ -11,6 +11,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"regexp"
+	"sort"
+	"strconv"
 	"strings"
 )
 
@@ -28,14 +30,22 @@ func RealTimeFundReply(update tgbotapi.Update) {
 
 	for range watchFunds {
 		raw := <-ch
-		reply = append(reply, []string{raw.Fundcode, raw.Gszzl, raw.Name})
+		//reply = append(reply, []string{raw.Fundcode, raw.Gszzl, raw.Name})
+		reply = append(reply, []string{raw.Gszzl, raw.Name})
 	}
+
+	sort.Slice(reply, func(i, j int) bool {
+		iF, _ := strconv.ParseFloat(reply[i][0], 64)
+		jF, _ := strconv.ParseFloat(reply[j][0], 64)
+		return iF > jF
+	})
 
 	tableString := &strings.Builder{}
 	table := tb.NewWriter(tableString)
 	table.SetColumnSeparator(" ")
 	table.SetCenterSeparator("+")
-	table.SetHeader([]string{"CODE", "RATE", "NAME"})
+	//table.SetHeader([]string{"CODE", "RATE", "NAME"})
+	table.SetHeader([]string{"RATE", "NAME"})
 
 	for _, v := range reply {
 		table.Append(v)
