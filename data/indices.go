@@ -16,7 +16,7 @@ import (
 
 func GlobalIndexReply(update tgbotapi.Update) {
 	//indices := []string{"000001.SS","399001.SZ","^GSPC","^DJI","^IXIC","^RUT","^VIX","^HSI"}
-	indices := []string{"000001.SS","399001.SZ","^GSPC","^DJI","^IXIC","^HSI"}
+	indices := []string{"000001.SS","399001.SZ", "^IXIC","^HSI"}
 
 	var reply [][]string
 	ch := make(chan Meta, len(indices))
