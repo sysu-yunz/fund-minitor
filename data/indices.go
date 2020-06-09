@@ -45,7 +45,7 @@ func GlobalIndexReply(update tgbotapi.Update) {
 	table := tb.NewWriter(tableString)
 	table.SetColumnSeparator(" ")
 	table.SetCenterSeparator("+")
-	table.SetHeader([]string{"Symbol", "%", "PRICE", "<>"})
+	table.SetHeader([]string{"Symbol", "%", "PRICE", "/"})
 
 	for _, v := range reply {
 		table.Append(v)
