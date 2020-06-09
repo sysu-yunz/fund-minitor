@@ -30,8 +30,7 @@ func RealTimeFundReply(update tgbotapi.Update) {
 
 	for range watchFunds {
 		raw := <-ch
-		//reply = append(reply, []string{raw.Fundcode, raw.Gszzl, raw.Name})
-		reply = append(reply, []string{raw.Gszzl, raw.Name})
+		reply = append(reply, []string{raw.Fundcode, raw.Gszzl, raw.Name})
 	}
 
 	sort.Slice(reply, func(i, j int) bool {
@@ -44,8 +43,7 @@ func RealTimeFundReply(update tgbotapi.Update) {
 	table := tb.NewWriter(tableString)
 	table.SetColumnSeparator(" ")
 	table.SetCenterSeparator("+")
-	//table.SetHeader([]string{"CODE", "RATE", "NAME"})
-	table.SetHeader([]string{"RATE", "NAME"})
+	table.SetHeader([]string{"CODE", "RATE", "NAME"})
 
 	for _, v := range reply {
 		table.Append(v)
