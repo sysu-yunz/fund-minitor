@@ -34,8 +34,8 @@ func RealTimeFundReply(update tgbotapi.Update) {
 	}
 
 	sort.Slice(reply, func(i, j int) bool {
-		iF, _ := strconv.ParseFloat(reply[i][0], 64)
-		jF, _ := strconv.ParseFloat(reply[j][0], 64)
+		iF, _ := strconv.ParseFloat(reply[i][1], 64)
+		jF, _ := strconv.ParseFloat(reply[j][1], 64)
 		return iF > jF
 	})
 
