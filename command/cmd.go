@@ -24,6 +24,8 @@ func Handle(update tgbotapi.Update) {
 				watch.FundUnwatch(update)
 			case "fund":
 				data.RealTimeFundReply(update)
+			case "hold":
+				data.HoldReply(update)
 			case "bitcoin":
 				cryptoc.GetBtcUSDReply(update)
 			case "index":

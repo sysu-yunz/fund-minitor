@@ -7,6 +7,7 @@ require (
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible
 	github.com/olekukonko/tablewriter v0.0.4
 	github.com/sirupsen/logrus v1.6.0
+	github.com/spf13/cast v1.3.0
 	github.com/spf13/viper v1.7.0
 	github.com/stretchr/objx v0.1.1 // indirect
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect

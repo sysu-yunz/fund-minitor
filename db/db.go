@@ -110,3 +110,28 @@ func (c *MgoC) GetWatchList(chatID int64) []WatchDB {
 
 	return results
 }
+
+func (c *MgoC) GetHolding(chatID int64) Holdings {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	col := c.Database("fund").Collection("hold")
+	res := col.FindOne(ctx, bson.M{"chatID":chatID})
+
+	var result Holdings
+	err := res.Decode(&result)
+	if err != nil { log.Error("Decode watch %+v", err) }
+
+	return result
+}
+
+func (c *MgoC) InsertHold(hold Holdings) {
+	col := c.Database("fund").Collection("hold")
+	res, err := col.InsertOne(context.TODO(), hold)
+
+	if err != nil {
+		log.Error("Inserting hold %+v ", err)
+	}
+
+	log.Debug("Inserted hold %+v ", res)
+}

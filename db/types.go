@@ -12,3 +12,18 @@ type FundInfoDB struct {
 	FundType   string `json:"fundType"`
 	FundPinYin string `json:"fundPinYin"`
 }
+
+type StockInfoDB struct {
+}
+
+type Holdings struct {
+	ChatID int64   `json:"chatID" bson:"chatID"`
+	Shares []Share `json:"Shares"`
+}
+
+type Share struct {
+	SecurityType int64
+	Code         string  `json:"Code"`
+	Shares       float64 `json:"Shares"`
+	Cost         float64 `json:"Cost"`
+}
