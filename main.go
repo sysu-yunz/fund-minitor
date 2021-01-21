@@ -27,22 +27,12 @@ func init() {
 }
 
 func main() {
+	bot.Run()
+
 	// TODO: Email
 	//e := &email.Email{
 	//	To: "dukeyunz@hotmail.com",
 	//	Subject: "Fund notification",
-	//}
-
-	// TODO: Bot
-	bot.Run()
-
-	// TODO: Monthly history
-	//fundCode := "481010"
-	//monthProfitRate := profit.MonthProfitRate(fundCode)
-	//if monthProfitRate > 0.01 {
-	//	e.Send(fmt.Sprintf("hello, enough profit, you need to sell, last 20 workday profit rate: %.2f%% !", monthProfitRate*100.0))
-	//} else if monthProfitRate < 0.03 {
-	//	e.Send(fmt.Sprintf("hello, it's good time to buy, last 20 workday profit rate: %.2f%% !", monthProfitRate*100.0))
 	//}
 
 	// TODO: Yesterday price cron job, send notification in the morning
