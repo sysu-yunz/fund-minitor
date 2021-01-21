@@ -15,8 +15,8 @@ type MgoC struct {
 }
 
 func NewDB(pwd string) *MgoC {
-	uri := "mongodb+srv://chengqian"+":"+pwd+"@cluster0-01hyt.azure.mongodb.net/fund?retryWrites=true&w=majority"
-	//uri := "mongodb://127.0.0.1:27017"
+	//uri := "mongodb+srv://chengqian"+":"+pwd+"@cluster0-01hyt.azure.mongodb.net/fund?retryWrites=true&w=majority"
+	uri := "mongodb://127.0.0.1:27017"
 	ctx := context.TODO()
 	clientOptions := options.Client().ApplyURI(uri)
 
