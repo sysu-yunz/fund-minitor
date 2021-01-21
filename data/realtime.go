@@ -87,24 +87,24 @@ func HoldReply(update tgbotapi.Update) {
 			if h.Code == f.Code {
 				h.Cost = f.Cost
 				h.Shares = f.Shares
+				h.LastPrice = lastPrice(f.Code)
 				h.Earn = h.Shares * (h.Price - h.Cost)
-				h.Cap = h.Price*h.Shares
+				h.TodayEarn = h.Shares * (h.Price - h.LastPrice)
+				h.Cap = h.Price * h.Shares
 			}
 		}
 
 		reply = append(reply, []string{
-			h.Code,
-			fmt.Sprintf("%.1f", h.Earn),
-			fmt.Sprintf("%.1f", h.Cap),
-			fmt.Sprintf("%.4f", h.Cost),
-			fmt.Sprintf("%.4f", h.Price),
+			// h.Code,
+			fmt.Sprintf("%.1f", h.TodayEarn),
+			fmt.Sprintf("%.1f", h.Cost*h.Shares),
 			h.Name,
 		})
 	}
 
 	sort.Slice(reply, func(i, j int) bool {
-		iF, _ := strconv.ParseFloat(reply[i][1], 64)
-		jF, _ := strconv.ParseFloat(reply[j][1], 64)
+		iF, _ := strconv.ParseFloat(reply[i][0], 64)
+		jF, _ := strconv.ParseFloat(reply[j][0], 64)
 		return iF > jF
 	})
 
@@ -112,7 +112,7 @@ func HoldReply(update tgbotapi.Update) {
 	table := tb.NewWriter(tableString)
 	table.SetColumnSeparator(" ")
 	table.SetCenterSeparator("+")
-	table.SetHeader([]string{"CODE", "EARN", "COST", "PRICE", "NAME"})
+	table.SetHeader([]string{"EARN", "COST", "NAME"})
 
 	for _, v := range reply {
 		table.Append(v)
@@ -122,6 +122,16 @@ func HoldReply(update tgbotapi.Update) {
 
 	r.TextReply(update, "<pre>"+tableString.String()+"</pre>")
 	//return "```"+tableString.String()+"```"
+}
+
+func estimateRealTimeProfit() {
+
+}
+
+func lastPrice(fc string) float64 {
+	lastValue := GetFundHistoryData(fc, 1)
+
+	return cast.ToFloat64(lastValue[0].DWJZ)
 }
 
 func getRealTime(fundCode string, ch chan realTimeRaw) {
@@ -173,15 +183,16 @@ type realTimeRaw struct {
 }
 
 type holdReply struct {
-	Code      string
-	Rate      float64
-	Name      string
-	Price     float64
-	Shares    float64
-	Cost      float64
-	Total     float64
-	Earn      float64
-	TodayEarn float64
-	Cap float64
+	Code       string
+	Rate       float64
+	Name       string
+	Price      float64
+	LastPrice  float64
+	Shares     float64
+	Cost       float64
+	Total      float64
+	Earn       float64
+	TodayEarn  float64
+	Cap        float64
 	CapPercent float64
 }

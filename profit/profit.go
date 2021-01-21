@@ -1,29 +1,25 @@
 package profit
 
 import (
-	"fmt"
 	"fund/data"
-	"fund/global"
 	"fund/log"
 	"github.com/spf13/cast"
 )
 
 func PrevMonthProfitRate(fc string) float64 {
-	return IntervalRate(fc, 20)
+	return IntervalProfitRate(fc, 20)
 }
 
 func LastProfitRate(fc string) float64 {
-	return IntervalRate(fc, 1)
+	return IntervalProfitRate(fc, 1)
 }
 
-func UpdateLastRate() {
-	hs := global.MgoDB.GetHolding(481088602)
-	for _, sh := range hs.Shares {
-		fmt.Println(LastProfitRate(sh.Code), sh.Code, sh.Shares)
-	}
+func LastProfit(fc string) float64 {
+	lastTwo := data.GetFundHistoryData(fc, 2)
+	return cast.ToFloat64(lastTwo[0].DWJZ) - cast.ToFloat64(lastTwo[1].DWJZ)
 }
 
-func IntervalRate(fc string, days int) float64 {
+func IntervalProfitRate(fc string, days int) float64 {
 	historyData := data.GetFundHistoryData(fc, days)
 
 	if days == 1 {

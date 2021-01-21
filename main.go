@@ -1,11 +1,11 @@
 package main
 
 import (
+	"fund/bot"
 	"fund/config"
 	"fund/db"
 	"fund/global"
 	"fund/log"
-	"fund/profit"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
@@ -34,7 +34,7 @@ func main() {
 	//}
 
 	// TODO: Bot
-	//bot.Run()
+	bot.Run()
 
 	// TODO: Monthly history
 	//fundCode := "481010"
@@ -44,8 +44,6 @@ func main() {
 	//} else if monthProfitRate < 0.03 {
 	//	e.Send(fmt.Sprintf("hello, it's good time to buy, last 20 workday profit rate: %.2f%% !", monthProfitRate*100.0))
 	//}
-
-	profit.UpdateLastRate()
 
 	// TODO: Yesterday price cron job, send notification in the morning
 	// TODO: Prepare money for upcoming repayment

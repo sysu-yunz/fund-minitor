@@ -41,8 +41,8 @@ type LSJZList struct {
 	ACTUALSYI string      `json:"ACTUALSYI"`
 	NAVTYPE   string      `json:"NAVTYPE"`
 	JZZZL     string      `json:"JZZZL"` // 净值增长率
-	SGZT      string      `json:"SGZT"` // 申购状态
-	SHZT      string      `json:"SHZT"` // 赎回状态
+	SGZT      string      `json:"SGZT"`  // 申购状态
+	SHZT      string      `json:"SHZT"`  // 赎回状态
 	FHFCZ     string      `json:"FHFCZ"`
 	FHFCBZ    string      `json:"FHFCBZ"`
 	DTYPE     interface{} `json:"DTYPE"`
