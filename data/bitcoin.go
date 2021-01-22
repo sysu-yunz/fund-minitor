@@ -1,4 +1,4 @@
-package cryptoc
+package data
 
 import (
 	"encoding/json"
@@ -15,7 +15,7 @@ import (
 
 func GetBtcUSDReply(update tgbotapi.Update) {
 	var reply [][]string
-	btc := getBitcoin().Data[0]
+	btc := getBitcoin().CoinData[0]
 	q := btc.Quote.USD
 
 	reply = append(reply, []string{"Name", btc.Name})
@@ -67,9 +67,10 @@ func getBitcoin() BitcoinRaw {
 }
 
 type BitcoinRaw struct {
-	Status Status `json:"status"`
-	Data   []Data `json:"data"`
+	Status   Status     `json:"status"`
+	CoinData []CoinData `json:"data"`
 }
+
 type Status struct {
 	Timestamp    time.Time   `json:"timestamp"`
 	ErrorCode    int         `json:"error_code"`
@@ -78,6 +79,7 @@ type Status struct {
 	CreditCount  int         `json:"credit_count"`
 	Notice       interface{} `json:"notice"`
 }
+
 type USD struct {
 	Price            float64   `json:"price"`
 	Volume24H        float64   `json:"volume_24h"`
@@ -87,10 +89,12 @@ type USD struct {
 	MarketCap        float64   `json:"market_cap"`
 	LastUpdated      time.Time `json:"last_updated"`
 }
+
 type Quote struct {
 	USD USD `json:"USD"`
 }
-type Data struct {
+
+type CoinData struct {
 	ID                int         `json:"id"`
 	Name              string      `json:"name"`
 	Symbol            string      `json:"symbol"`
