@@ -1,10 +1,9 @@
-package data
+package bot
 
 import (
 	"encoding/json"
 	"fmt"
 	"fund/log"
-	r "fund/reply"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	tb "github.com/olekukonko/tablewriter"
 	"io/ioutil"
@@ -36,7 +35,7 @@ func GetBtcUSDReply(update tgbotapi.Update) {
 
 	table.Render()
 
-	r.TextReply(update, "<pre>"+tableString.String()+"</pre>")
+	TextReply(update, "<pre>"+tableString.String()+"</pre>")
 }
 
 func getBitcoin() BitcoinRaw {

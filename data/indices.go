@@ -4,58 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"fund/log"
-	r "fund/reply"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
-	tb "github.com/olekukonko/tablewriter"
 	"io/ioutil"
 	"net/http"
-	"sort"
-	"strconv"
-	"strings"
 )
-
-func GlobalIndexReply(update tgbotapi.Update) {
-	//indices := []string{"000001.SS","399001.SZ","^GSPC","^DJI","^IXIC","^RUT","^VIX","^HSI"}
-	indices := []string{"000001.SS","399001.SZ", "^IXIC","^HSI"}
-
-	var reply [][]string
-	ch := make(chan Meta, len(indices))
-
-	for _, f := range indices {
-		go indexData(f, ch)
-	}
-
-	for range indices {
-		raw := <-ch
-		price := fmt.Sprintf("%.1f", raw.RegularMarketPrice)
-		symbol := raw.Symbol
-		change := fmt.Sprintf("%.1f", raw.RegularMarketPrice - raw.PreviousClose)
-		rate := fmt.Sprintf("%.2f", (raw.RegularMarketPrice - raw.PreviousClose)/raw.PreviousClose*100)
-		reply = append(reply, []string{symbol, rate, price, change})
-	}
-
-	sort.Slice(reply, func(i, j int) bool {
-		iF, _ := strconv.ParseFloat(reply[i][1], 64)
-		jF, _ := strconv.ParseFloat(reply[j][1], 64)
-
-		return iF > jF
-	})
-
-	tableString := &strings.Builder{}
-	table := tb.NewWriter(tableString)
-	table.SetColumnSeparator(" ")
-	table.SetCenterSeparator("+")
-	table.SetHeader([]string{"Symbol", "%", "PRICE", "/"})
-
-	for _, v := range reply {
-		table.Append(v)
-	}
-
-	table.Render()
-
-	r.TextReply(update, "<pre>"+tableString.String()+"</pre>")
-	//return "```"+tableString.String()+"```"
-}
 
 // 000001.SS
 // 399001.SZ
@@ -66,7 +17,7 @@ func GlobalIndexReply(update tgbotapi.Update) {
 // ^VIX
 // ^HSI
 
-func indexData(indexCode string, ch chan Meta) {
+func IndexData(indexCode string, ch chan Meta) {
 	url := "https://query1.finance.yahoo.com/v8/finance/chart/"+indexCode+"?range=2m"
 	method := "GET"
 

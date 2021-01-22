@@ -4,41 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"fund/log"
-	r "fund/reply"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
-	tb "github.com/olekukonko/tablewriter"
 	"io/ioutil"
 	"net/http"
-	"strings"
 )
 
-func BondReply(update tgbotapi.Update) {
-	var reply [][]string
-	bond := getChina10YearBondYield().Records
-
-	reply = append(reply, []string{"10 Rate", bond[0].TenRate})
-	reply = append(reply, []string{"10 RateLast", bond[1].TenRate})
-	reply = append(reply, []string{"1 Rate", bond[0].OneRate})
-	reply = append(reply, []string{"1 RateLast", bond[1].OneRate})
-	reply = append(reply, []string{"Date", bond[0].DateString})
-
-	tableString := &strings.Builder{}
-	table := tb.NewWriter(tableString)
-	table.SetAlignment(tb.ALIGN_LEFT)
-	table.SetColumnSeparator("|")
-	table.SetCenterSeparator("+")
-	table.SetHeader([]string{"ITEM", "VALUE"})
-
-	for _, v := range reply {
-		table.Append(v)
-	}
-
-	table.Render()
-
-	r.TextReply(update, "<pre>"+tableString.String()+"</pre>")
-}
-
-func getChina10YearBondYield() BondDataRaw {
+func GetChina10YearBondYield() BondDataRaw {
 	url := "http://www.chinamoney.com.cn/ags/ms/cm-u-bk-currency/SddsIntrRateGovYldHis?lang=CN&pageNum=1&pageSize=15"
 	method := "GET"
 

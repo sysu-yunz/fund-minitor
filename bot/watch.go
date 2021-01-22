@@ -1,8 +1,7 @@
-package watch
+package bot
 
 import (
 	"fund/global"
-	"fund/reply"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
@@ -12,12 +11,12 @@ func FundWatch(update tgbotapi.Update) {
 	if f, ok := global.MgoDB.ValidFundCode(arguments); ok {
 		if !global.MgoDB.FundWatched(chatID, arguments) {
 			global.MgoDB.InsertWatch(update.Message.Chat.ID, arguments)
-			reply.TextReply(update, f.FundName+"\n"+f.FundType)
+			TextReply(update, f.FundName+"\n"+f.FundType)
 		} else {
-			reply.TextReply(update, "Fund already watched !")
+			TextReply(update, "Fund already watched !")
 		}
 	} else {
-		reply.TextReply(update, "Invalid fundCode !")
+		TextReply(update, "Invalid fundCode !")
 	}
 }
 
@@ -27,11 +26,11 @@ func FundUnwatch(update tgbotapi.Update)  {
 	if f, ok := global.MgoDB.ValidFundCode(arguments); ok {
 		if global.MgoDB.FundWatched(chatID, arguments) {
 			global.MgoDB.DeleteWatch(update.Message.Chat.ID, arguments)
-			reply.TextReply(update, f.FundName+"\n"+f.FundType)
+			TextReply(update, f.FundName+"\n"+f.FundType)
 		} else {
-			reply.TextReply(update, "Fund not on watch !")
+			TextReply(update, "Fund not on watch !")
 		}
 	} else {
-		reply.TextReply(update, "Invalid fundCode !")
+		TextReply(update, "Invalid fundCode !")
 	}
 }

@@ -1,7 +1,6 @@
 package bot
 
 import (
-	"fund/command"
 	"fund/global"
 	"fund/log"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
@@ -17,7 +16,7 @@ func Run()  {
 	}
 
 	for update := range updates {
-		command.Handle(update)
+		Handle(update)
 	}
 }
 

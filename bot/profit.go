@@ -1,4 +1,4 @@
-package profit
+package bot
 
 import (
 	"fund/data"

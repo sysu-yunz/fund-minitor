@@ -1,11 +1,7 @@
-package command
+package bot
 
 import (
-	"fund/cryptoc"
-	"fund/data"
 	"fund/global"
-	"fund/reply"
-	"fund/watch"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
@@ -19,21 +15,21 @@ func Handle(update tgbotapi.Update) {
 		if update.Message.IsCommand() {
 			switch update.Message.Command() {
 			case "watch":
-				watch.FundWatch(update)
+				FundWatch(update)
 			case "unwatch":
-				watch.FundUnwatch(update)
+				FundUnwatch(update)
 			case "fund":
-				data.RealTimeFundReply(update)
+				RealTimeFundReply(update)
 			case "hold":
-				data.HoldReply(update)
+				HoldReply(update)
 			case "bitcoin":
-				cryptoc.GetBtcUSDReply(update)
+				GetBtcUSDReply(update)
 			case "index":
-				data.GlobalIndexReply(update)
+				GlobalIndexReply(update)
 			case "bond":
-				data.BondReply(update)
+				BondReply(update)
 			default:
-				reply.TextReply(update, "暂时无法理解： "+update.Message.Text)
+				TextReply(update, "暂时无法理解： "+update.Message.Text)
 			}
 		}
 	}
