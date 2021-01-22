@@ -11,10 +11,6 @@ import (
 	"regexp"
 )
 
-func estimateRealTimeProfit() {
-
-}
-
 func LastPrice(fc string) float64 {
 	lastValue := GetFundHistoryData(fc, 1)
 

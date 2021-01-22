@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"fund/data"
 	"fund/global"
-	"fund/log"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	tb "github.com/olekukonko/tablewriter"
 	"github.com/spf13/cast"
@@ -12,22 +11,6 @@ import (
 	"strconv"
 	"strings"
 )
-
-type RR interface {
-	MsgReply(update tgbotapi.Update, )
-}
-
-func TextReply(update tgbotapi.Update, s string)  {
-	msg := tgbotapi.NewMessage(update.Message.Chat.ID, s)
-	msg.ReplyToMessageID = update.Message.MessageID
-	msg.ParseMode = tgbotapi.ModeHTML
-	m, err := global.Bot.Send(msg)
-	if err != nil {
-		log.Error("Text reply %+v ", err)
-	}
-
-	log.Debug("Replied update %+v with %+v", update.UpdateID, m)
-}
 
 func GlobalIndexReply(update tgbotapi.Update) {
 	//indices := []string{"000001.SS","399001.SZ","^GSPC","^DJI","^IXIC","^RUT","^VIX","^HSI"}
@@ -179,7 +162,6 @@ func HoldReply(update tgbotapi.Update) {
 	//return "```"+tableString.String()+"```"
 }
 
-
 func BondReply(update tgbotapi.Update) {
 	var reply [][]string
 	bond := data.GetChina10YearBondYield().Records
@@ -204,4 +186,34 @@ func BondReply(update tgbotapi.Update) {
 	table.Render()
 
 	TextReply(update, "<pre>"+tableString.String()+"</pre>")
+}
+
+func FundWatch(update tgbotapi.Update) {
+	chatID := update.Message.Chat.ID
+	arguments := update.Message.CommandArguments()
+	if f, ok := global.MgoDB.ValidFundCode(arguments); ok {
+		if !global.MgoDB.FundWatched(chatID, arguments) {
+			global.MgoDB.InsertWatch(update.Message.Chat.ID, arguments)
+			TextReply(update, f.FundName+"\n"+f.FundType)
+		} else {
+			TextReply(update, "Fund already watched !")
+		}
+	} else {
+		TextReply(update, "Invalid fundCode !")
+	}
+}
+
+func FundUnwatch(update tgbotapi.Update)  {
+	chatID := update.Message.Chat.ID
+	arguments := update.Message.CommandArguments()
+	if f, ok := global.MgoDB.ValidFundCode(arguments); ok {
+		if global.MgoDB.FundWatched(chatID, arguments) {
+			global.MgoDB.DeleteWatch(update.Message.Chat.ID, arguments)
+			TextReply(update, f.FundName+"\n"+f.FundType)
+		} else {
+			TextReply(update, "Fund not on watch !")
+		}
+	} else {
+		TextReply(update, "Invalid fundCode !")
+	}
 }
