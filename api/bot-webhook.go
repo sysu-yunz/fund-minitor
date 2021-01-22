@@ -2,7 +2,7 @@ package handler
 
 import (
 	"encoding/json"
-	"fund/command"
+	"fund/bot"
 	"fund/db"
 	"fund/global"
 	"fund/log"
@@ -38,5 +38,5 @@ func Handler(w http.ResponseWriter, req *http.Request) {
 	}
 	log.Debug("Update: %+v %+v", update.Message.Text, update)
 
-	command.Handle(update)
+	bot.Handle(update)
 }
