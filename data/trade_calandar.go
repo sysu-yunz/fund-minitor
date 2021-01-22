@@ -1,4 +1,4 @@
-package sse
+package data
 
 /*
 	Shanghai Stock Exchange
