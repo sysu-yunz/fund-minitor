@@ -34,8 +34,6 @@ func main() {
 	//	To: "dukeyunz@hotmail.com",
 	//	Subject: "Fund notification",
 	//}
-
-	// TODO: Yesterday price cron job, send notification in the morning
-	// TODO: Prepare money for upcoming repayment
 	// TODO: Remind me to watch film
 }
+

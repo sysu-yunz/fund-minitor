@@ -4,9 +4,13 @@ import (
 	"fmt"
 	"fund/data"
 	"fund/global"
+	"fund/util"
+	"github.com/go-echarts/go-echarts/v2/charts"
+	"github.com/go-echarts/go-echarts/v2/opts"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	tb "github.com/olekukonko/tablewriter"
 	"github.com/spf13/cast"
+	"os"
 	"sort"
 	"strconv"
 	"strings"
@@ -84,6 +88,38 @@ func GlobalIndexReply(update tgbotapi.Update) {
 	//return "```"+tableString.String()+"```"
 }
 
+func ChartsReply(update tgbotapi.Update)  {
+	//chatID := update.Message.Chat.ID
+
+	pie := charts.NewPie()
+	pie.SetGlobalOptions(charts.WithTitleOpts(opts.Title{
+		Title: "My portfolio",
+	}),
+		charts.WithTooltipOpts(opts.Tooltip{
+			Show:      true,
+			Trigger:   "",
+			TriggerOn: "",
+			Formatter: "{b}-{d}%",
+		}))
+
+	pie.AddSeries("xxxxxxxx", generatePieItems())
+	p, _ := os.Create("pie.html")
+	pie.Render(p)
+}
+
+func generatePieItems() []opts.PieData {
+	items := make([]opts.PieData, 0)
+
+	items = append(items, opts.PieData{Name: "万科A", Value: 10000})
+	items = append(items, opts.PieData{Name: "行业基金", Value: 10000})
+	items = append(items, opts.PieData{Name: "债券基金", Value: 10000})
+	items = append(items, opts.PieData{Name: "指数基金", Value: 10000})
+	items = append(items, opts.PieData{Name: "定期存款", Value: 10000})
+	items = append(items, opts.PieData{Name: "活期现金", Value: 30000})
+
+	return items
+}
+
 func RealTimeFundReply(update tgbotapi.Update) {
 	chatID := update.Message.Chat.ID
 	watchFunds := global.MgoDB.GetWatchList(chatID)
@@ -123,8 +159,6 @@ func RealTimeFundReply(update tgbotapi.Update) {
 	//return "```"+tableString.String()+"```"
 }
 
-
-
 func HoldReply(update tgbotapi.Update) {
 	chatID := update.Message.Chat.ID
 	holdFunds := global.MgoDB.GetHolding(chatID)
@@ -143,7 +177,8 @@ func HoldReply(update tgbotapi.Update) {
 
 		hr = append(hr, data.HoldReply{
 			Code:  raw.Fundcode,
-			Name:  raw.Name,
+			Name:  util.ShortenFundName(raw.Name),
+			//Name: raw.Name,
 			Rate:  estimateRate,
 			Price: estimateValue,
 		})
@@ -158,7 +193,7 @@ func HoldReply(update tgbotapi.Update) {
 				h.Shares = f.Shares
 				h.LastPrice = data.LastPrice(f.Code)
 				h.Earn = h.Shares * (h.Price - h.Cost)
-				h.TodayEarn = h.Shares * (h.Price - h.LastPrice)
+				h.TodayEarn = h.Shares * h.LastPrice * h.Rate/100
 				h.Cap = h.Price * h.Shares
 			}
 		}
@@ -166,6 +201,7 @@ func HoldReply(update tgbotapi.Update) {
 		reply = append(reply, []string{
 			// h.Code,
 			fmt.Sprintf("%.1f", h.TodayEarn),
+			fmt.Sprintf("%.2f", h.Rate),
 			fmt.Sprintf("%.1f", h.Cost*h.Shares),
 			h.Name,
 		})
@@ -181,7 +217,7 @@ func HoldReply(update tgbotapi.Update) {
 	table := tb.NewWriter(tableString)
 	table.SetColumnSeparator(" ")
 	table.SetCenterSeparator("+")
-	table.SetHeader([]string{"EARN", "COST", "NAME"})
+	table.SetHeader([]string{"EARN", "%", "COST", "NAME"})
 
 	for _, v := range reply {
 		table.Append(v)

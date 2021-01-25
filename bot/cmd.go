@@ -27,6 +27,8 @@ func Handle(update tgbotapi.Update) {
 				GetBtcUSDReply(update)
 			case "index":
 				GlobalIndexReply(update)
+			case "chart":
+				ChartsReply(update)
 			default:
 				TextReply(update, "暂时无法理解： "+update.Message.Text)
 			}
