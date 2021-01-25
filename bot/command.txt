@@ -1,7 +1,6 @@
 fund - 获取基金信息
 bitcoin - 获取比特币信息
 index - 获取指数信息
-bond - 获取中国国债信息
 hold - 持仓信息
 watch - 加入观察列表
 unwatch - 取消观察

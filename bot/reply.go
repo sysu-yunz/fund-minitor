@@ -13,37 +13,66 @@ import (
 )
 
 func GlobalIndexReply(update tgbotapi.Update) {
+	type index struct {
+		Symbol string
+		Name   string
+	}
 	//indices := []string{"000001.SS","399001.SZ","^GSPC","^DJI","^IXIC","^RUT","^VIX","^HSI"}
-	indices := []string{"000001.SS","399001.SZ", "^IXIC","^HSI"}
+	indices := []index{
+		{"000001.SS", "上证"},
+		{"399001.SZ", "深证"},
+		{"000300.SS", "沪深300"},
+		{"^HSI", "恒指"},
+		{"^IXIC", "纳指"},
+	}
 
 	var reply [][]string
 	ch := make(chan data.Meta, len(indices))
 
 	for _, f := range indices {
-		go data.IndexData(f, ch)
+		go data.IndexData(f.Symbol, ch)
 	}
 
 	for range indices {
 		raw := <-ch
 		price := fmt.Sprintf("%.1f", raw.RegularMarketPrice)
 		symbol := raw.Symbol
-		change := fmt.Sprintf("%.1f", raw.RegularMarketPrice - raw.PreviousClose)
-		rate := fmt.Sprintf("%.2f", (raw.RegularMarketPrice - raw.PreviousClose)/raw.PreviousClose*100)
-		reply = append(reply, []string{symbol, rate, price, change})
+
+		change := fmt.Sprintf("%.1f", raw.RegularMarketPrice-raw.PreviousClose)
+		rate := fmt.Sprintf("%.2f", (raw.RegularMarketPrice-raw.PreviousClose)/raw.PreviousClose*100)
+
+		name := symbol
+		for _, d := range indices {
+			if symbol == d.Symbol {
+				name = d.Name
+			}
+		}
+
+		reply = append(reply, []string{rate, price, change, name})
 	}
 
 	sort.Slice(reply, func(i, j int) bool {
-		iF, _ := strconv.ParseFloat(reply[i][1], 64)
-		jF, _ := strconv.ParseFloat(reply[j][1], 64)
+		iF, _ := strconv.ParseFloat(reply[i][0], 64)
+		jF, _ := strconv.ParseFloat(reply[j][0], 64)
 
 		return iF > jF
 	})
+
+	bondRaw := data.GetChina10YearBondYield().Records
+	bond := cast.ToFloat64(bondRaw[0].TenRate)
+
+	bond10Str := fmt.Sprintf("%.2f", bond*100)
+	rate10 := cast.ToFloat64(bondRaw[0].TenRate)
+	rate10last := cast.ToFloat64(bondRaw[1].TenRate)
+	ror := fmt.Sprintf("%.2f", (rate10-rate10last)/rate10last*100)
+	percent := fmt.Sprintf("%.4f", (rate10-rate10last)*100)
+	reply = append(reply, []string{ror, bond10Str, percent, "国债10"})
 
 	tableString := &strings.Builder{}
 	table := tb.NewWriter(tableString)
 	table.SetColumnSeparator(" ")
 	table.SetCenterSeparator("+")
-	table.SetHeader([]string{"Symbol", "%", "PRICE", "/"})
+	table.SetHeader([]string{"%", "PRICE", "/", "NAME"})
 
 	for _, v := range reply {
 		table.Append(v)
@@ -93,6 +122,8 @@ func RealTimeFundReply(update tgbotapi.Update) {
 	TextReply(update, "<pre>"+tableString.String()+"</pre>")
 	//return "```"+tableString.String()+"```"
 }
+
+
 
 func HoldReply(update tgbotapi.Update) {
 	chatID := update.Message.Chat.ID
@@ -162,31 +193,6 @@ func HoldReply(update tgbotapi.Update) {
 	//return "```"+tableString.String()+"```"
 }
 
-func BondReply(update tgbotapi.Update) {
-	var reply [][]string
-	bond := data.GetChina10YearBondYield().Records
-
-	reply = append(reply, []string{"10 Rate", bond[0].TenRate})
-	reply = append(reply, []string{"10 RateLast", bond[1].TenRate})
-	reply = append(reply, []string{"1 Rate", bond[0].OneRate})
-	reply = append(reply, []string{"1 RateLast", bond[1].OneRate})
-	reply = append(reply, []string{"Date", bond[0].DateString})
-
-	tableString := &strings.Builder{}
-	table := tb.NewWriter(tableString)
-	table.SetAlignment(tb.ALIGN_LEFT)
-	table.SetColumnSeparator("|")
-	table.SetCenterSeparator("+")
-	table.SetHeader([]string{"ITEM", "VALUE"})
-
-	for _, v := range reply {
-		table.Append(v)
-	}
-
-	table.Render()
-
-	TextReply(update, "<pre>"+tableString.String()+"</pre>")
-}
 
 func FundWatch(update tgbotapi.Update) {
 	chatID := update.Message.Chat.ID
@@ -203,7 +209,7 @@ func FundWatch(update tgbotapi.Update) {
 	}
 }
 
-func FundUnwatch(update tgbotapi.Update)  {
+func FundUnwatch(update tgbotapi.Update) {
 	chatID := update.Message.Chat.ID
 	arguments := update.Message.CommandArguments()
 	if f, ok := global.MgoDB.ValidFundCode(arguments); ok {
