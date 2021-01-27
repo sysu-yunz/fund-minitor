@@ -1,44 +1,15 @@
-package bot
+package data
 
 import (
 	"encoding/json"
 	"fmt"
 	"fund/log"
-	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
-	tb "github.com/olekukonko/tablewriter"
 	"io/ioutil"
 	"net/http"
-	"strings"
 	"time"
 )
 
-func GetBtcUSDReply(update tgbotapi.Update) {
-	var reply [][]string
-	btc := getBitcoin().CoinData[0]
-	q := btc.Quote.USD
-
-	reply = append(reply, []string{"Name", btc.Name})
-	reply = append(reply, []string{"Price", fmt.Sprintf("%.3f", q.Price)})
-	reply = append(reply, []string{"Change1H", fmt.Sprintf("%.3f%%", q.PercentChange1H)})
-	reply = append(reply, []string{"Change24H", fmt.Sprintf("%.3f%%", q.PercentChange24H)})
-
-	tableString := &strings.Builder{}
-	table := tb.NewWriter(tableString)
-	table.SetAlignment(tb.ALIGN_LEFT)
-	table.SetColumnSeparator("|")
-	table.SetCenterSeparator("+")
-	table.SetHeader([]string{"ITEM", "VALUE"})
-
-	for _, v := range reply {
-		table.Append(v)
-	}
-
-	table.Render()
-
-	TextReply(update, "<pre>"+tableString.String()+"</pre>")
-}
-
-func getBitcoin() BitcoinRaw {
+func GetBitcoin() BitcoinRaw {
 	url := "https://web-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?limit=6&start=1"
 	method := "GET"
 
@@ -109,3 +80,4 @@ type CoinData struct {
 	LastUpdated       time.Time   `json:"last_updated"`
 	Quote             Quote       `json:"quote"`
 }
+

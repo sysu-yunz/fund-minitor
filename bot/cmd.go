@@ -23,8 +23,6 @@ func Handle(update tgbotapi.Update) {
 				RealTimeFundReply(update)
 			case "hold":
 				HoldReply(update)
-			case "bitcoin":
-				GetBtcUSDReply(update)
 			case "index":
 				GlobalIndexReply(update)
 			case "chart":
