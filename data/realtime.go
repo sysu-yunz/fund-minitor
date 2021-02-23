@@ -36,20 +36,21 @@ func GetRealTime(fundCode string, ch chan RealTimeRaw) {
 
 		log.Debug("Real time data resp %+v", string(body))
 
-		r, _ := regexp.Compile(`\((.*)\)`)
-		//fmt.Println(r.MatchString(string(body)))
-		s := r.FindStringSubmatch(string(body))
-
-		err = json.Unmarshal([]byte(s[1]), &realTimeData)
-		if err != nil {
-			log.Error("Realtime data of %+v Unmarshal failed! %+v %+v", fundCode, err, s[1])
+		if string(body) == "jsonpgz();" {
+			fdb, _ := global.MgoDB.ValidFundCode(fundCode)
+			realTimeData.Name = fdb.FundName
+		} else {
+			r, _ := regexp.Compile(`\((.*)\)`)
+			s := r.FindStringSubmatch(string(body))
+			err = json.Unmarshal([]byte(s[1]), &realTimeData)
+			if err != nil {
+				log.Error("Realtime data of %+v Unmarshal failed! %+v %+v", fundCode, err, s[1])
+			}
 			fdb, _ := global.MgoDB.ValidFundCode(fundCode)
 			realTimeData.Name = fdb.FundName
 		}
 	} else {
 		log.Error("Http response %+v ", res)
-		fdb, _ := global.MgoDB.ValidFundCode(fundCode)
-		realTimeData.Name = fdb.FundName
 	}
 
 	ch <- realTimeData

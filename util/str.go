@@ -17,7 +17,7 @@ func ShortenFundName(fundName string) string {
 		{"华夏沪港通恒生ETF联接C", "恒指ETF"},
 		{"汇添富中证生物科技指数A", "生物科技"},
 		{"易方达裕祥回报债券", "高回报债"},
-		{"中银金融地产混合A", "金融地产"},
+		{"中银金融地产混合", "金融地产"},
 		{"交银创新成长混合", "交银成长"},
 		{"广发中证全指家用电器指数C", "家电ETF"},
 		{"工银新能源汽车混合C", "新能车"},
@@ -25,7 +25,7 @@ func ShortenFundName(fundName string) string {
 		{"天弘中证电子ETF联接C", "电子ETF"},
 		{"汇添富全球消费混合人民币C", "全球消费"},
 		{"广发纳斯达克100指数C", "纳指100"},
-		{"天弘中证500ETF联接C", "中证500"},
+		{"天弘中证500指数C", "中证500"},
 	}
 
 	for _, n := range specials {
@@ -35,6 +35,8 @@ func ShortenFundName(fundName string) string {
 	}
 	x := gojieba.NewJieba()
 	defer x.Free()
+
+	// 耗时
 	words := x.Cut(fundName, true)
 	log.Debug(strings.Join(words, "-"))
 	if len(words) >= 2 {
