@@ -27,6 +27,14 @@ func Handle(update tgbotapi.Update) {
 				GlobalIndexReply(update)
 			case "chart":
 				ChartsReply(update)
+			// TODO
+			//case "buy":
+			//	BuyReply(update)
+			//case "sell":
+			//	SellReply(update)
+			//case "stock":
+			//	StockReply(update)
+
 			default:
 				TextReply(update, "暂时无法理解： "+update.Message.Text)
 			}

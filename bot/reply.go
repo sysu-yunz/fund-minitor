@@ -99,7 +99,7 @@ func ChartsReply(update tgbotapi.Update)  {
 
 	pie := charts.NewPie()
 	pie.SetGlobalOptions(charts.WithTitleOpts(opts.Title{
-		Title: "My portfolio",
+		Title: "家庭资产配置",
 	}),
 		charts.WithTooltipOpts(opts.Tooltip{
 			Show:      true,
@@ -116,12 +116,9 @@ func ChartsReply(update tgbotapi.Update)  {
 func generatePieItems() []opts.PieData {
 	items := make([]opts.PieData, 0)
 
-	items = append(items, opts.PieData{Name: "万科A", Value: 10000})
-	items = append(items, opts.PieData{Name: "行业基金", Value: 10000})
-	items = append(items, opts.PieData{Name: "债券基金", Value: 10000})
+	items = append(items, opts.PieData{Name: "主动债券基金", Value: 10000})
 	items = append(items, opts.PieData{Name: "指数基金", Value: 10000})
-	items = append(items, opts.PieData{Name: "定期存款", Value: 10000})
-	items = append(items, opts.PieData{Name: "活期现金", Value: 30000})
+	items = append(items, opts.PieData{Name: "主动行业基金", Value: 10000})
 
 	return items
 }

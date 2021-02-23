@@ -25,7 +25,7 @@ func ShortenFundName(fundName string) string {
 		{"天弘中证电子ETF联接C", "电子ETF"},
 		{"汇添富全球消费混合人民币C", "全球消费"},
 		{"广发纳斯达克100指数C", "纳指100"},
-		{"", ""},
+		{"天弘中证500ETF联接C", "中证500"},
 	}
 
 	for _, n := range specials {
