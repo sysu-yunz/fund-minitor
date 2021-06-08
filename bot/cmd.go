@@ -27,6 +27,8 @@ func Handle(update tgbotapi.Update) {
 				HoldReply(update)
 			case "index":
 				GlobalIndexReply(update)
+			case "tv":
+				TVReply(update)
 			case "chart":
 				ChartsReply(update)
 			case "test":
