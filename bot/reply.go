@@ -17,9 +17,9 @@ import (
 )
 
 func TVReply(update tgbotapi.Update)  {
-	tvs := []string{"young-sheldon", "the-handmaids-tale"}
+	tvs := []string{"young-sheldon"}
 
-	res := "小谢尔顿 第四季\n" + data.GetTVData(tvs[0]) + "\n------------------\n" + "使女的故事 第四季\n" + data.GetTVData(tvs[1])
+	res := "小谢尔顿 第四季\n" + data.GetTVData(tvs[0])
 
 	TextReply(update, res)
 }
