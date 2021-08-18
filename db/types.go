@@ -19,6 +19,7 @@ type StockInfoDB struct {
 type Holdings struct {
 	ChatID int64   `json:"chatID" bson:"chatID"`
 	Shares []Share `json:"Shares"`
+	Bitcoin float64 `json:"bitcoin"`
 }
 
 type Share struct {

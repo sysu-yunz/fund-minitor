@@ -34,6 +34,5 @@ func main() {
 	//	To: "dukeyunz@hotmail.com",
 	//	Subject: "Fund notification",
 	//}
-	// TODO: Remind me to watch film
 }
 
