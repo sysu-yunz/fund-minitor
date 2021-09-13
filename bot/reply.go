@@ -227,7 +227,7 @@ func HoldReply(update tgbotapi.Update) {
 
 	btc := data.GetBitcoin().CoinData[0]
 	q := btc.Quote.USD.Price*6.5
-	bc := 3000.0
+	bc := 4000.0
 	btcRow := fmt.Sprintf("%.1f, %.2f, %.1f, 比特币", q*holdFunds.Bitcoin-bc, (q*holdFunds.Bitcoin-bc)/bc*100, bc)
 	reply = append(reply, strings.Split(btcRow, ", "))
 
