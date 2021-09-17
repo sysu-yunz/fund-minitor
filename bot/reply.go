@@ -17,10 +17,11 @@ import (
 )
 
 func TVReply(update tgbotapi.Update)  {
-	tvs := []string{"young-sheldon", "ted-lasso"}
+	tvs := []string{"young-sheldon", "ted-lasso", "billions"}
 
 	res := "小谢尔顿 第四季\n" + data.GetTVData(tvs[0]) + "\n"
-	res = res + "足球教练 第二季\n" + data.GetTVData(tvs[1])
+	res = res + "足球教练 第二季\n" + data.GetTVData(tvs[1]) + "\n"
+	res = res + "亿万 第五季\n" + data.GetTVData(tvs[2])
 
 	TextReply(update, res)
 }
