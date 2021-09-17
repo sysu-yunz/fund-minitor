@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 )
 
 func GetTVData(tvName string) string {
@@ -60,8 +61,22 @@ func findLatestEpisode(doc *goquery.Document) string {
 		d := s.Find(".episode-datetime-convert").Text()
 		ll.Info("Title-----------%s", t)
 		ll.Info("Date-----------%s", d)
+
+		// TODO 因为显示空间有限，只保留部分
+		// dd := parseTVDate(d)
+
 		res = res + "\n" + t + "\n" + d + "\n"
 	})
 
 	return res
+}
+
+func parseTVDate(d string) time.Time {
+	layout := ""
+	date, err := time.Parse(layout, d)
+	if err != nil {
+
+	}
+
+	return date
 }
