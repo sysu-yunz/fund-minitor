@@ -62,20 +62,24 @@ func findLatestEpisode(doc *goquery.Document) string {
 		ll.Info("Title-----------%s", t)
 		ll.Info("Date-----------%s", d)
 
-		// TODO 因为显示空间有限，只保留部分
-		// dd := parseTVDate(d)
+		dd := parseTVDate(d)
 
-		res = res + "\n" + t + "\n" + d + "\n"
+		if dd.Before(time.Now().Add(-240*time.Hour)) {
+			ll.Info("[TVDate] Skip old episode %v", dd)
+		} else {
+			res = res + "\n" + t + "\n" + d + "\n"
+		}
 	})
 
 	return res
 }
 
 func parseTVDate(d string) time.Time {
-	layout := ""
+	layout := "2 January 2006 15:04"
+	// 15 June 2020 01:00
 	date, err := time.Parse(layout, d)
 	if err != nil {
-
+		ll.Error("[TV] Parse date fail ", err)
 	}
 
 	return date
