@@ -66,6 +66,8 @@ func findLatestEpisode(doc *goquery.Document) string {
 
 		if dd.Before(time.Now().Add(-240*time.Hour)) {
 			ll.Info("[TVDate] Skip old episode %v", dd)
+		} else if dd.After(time.Now()) && dd.Before(time.Now().Add(168*time.Hour)) {
+			res = res + "\n" + t + "\n" + d + "  《====" + "\n"
 		} else {
 			res = res + "\n" + t + "\n" + d + "\n"
 		}
