@@ -6,6 +6,7 @@ import (
 	"fund/db"
 	"fund/global"
 	"fund/log"
+
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
@@ -35,4 +36,3 @@ func main() {
 	//	Subject: "Fund notification",
 	//}
 }
-

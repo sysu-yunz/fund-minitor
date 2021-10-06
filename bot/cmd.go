@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"fund/global"
 	"fund/log"
+	"strings"
+
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	"github.com/mmcdole/gofeed"
 	"github.com/piquette/finance-go/quote"
 )
 
@@ -35,6 +38,8 @@ func Handle(update tgbotapi.Update) {
 				Keyboard(update)
 			case "appl":
 				Yahoo(update)
+			case "kpl":
+				KPL(update)
 
 			// TODO
 			//case "buy":
@@ -67,7 +72,21 @@ func TextReply(update tgbotapi.Update, s string) {
 	log.Debug("Replied update %+v with %+v", update.UpdateID, m)
 }
 
-func Yahoo(update tgbotapi.Update)  {
+func KPL(update tgbotapi.Update) {
+	fp := gofeed.NewParser()
+	feed, _ := fp.ParseURL("https://yunz-rss.vercel.app/weibo/user/6074356560")
+	rpl := "还未更新"
+	for _, it := range feed.Items {
+		if strings.Contains(it.Title, "首发名单") {
+			fmt.Println(it.Link)
+			rpl = it.Link
+		}
+	}
+
+	TextReply(update, rpl)
+}
+
+func Yahoo(update tgbotapi.Update) {
 	q, err := quote.Get("AAPL")
 	if err != nil {
 		// Uh-oh.
@@ -84,7 +103,7 @@ func Keyboard(update tgbotapi.Update) {
 	msg.ReplyMarkup = tgbotapi.NewReplyKeyboard(
 		tgbotapi.NewKeyboardButtonRow(
 			tgbotapi.NewKeyboardButton("hello"),
-			),
+		),
 		tgbotapi.NewKeyboardButtonRow(tgbotapi.NewKeyboardButtonContact("contact"),
 			tgbotapi.NewKeyboardButtonLocation("location"),
 		),
