@@ -5,23 +5,30 @@ import (
 	"fund/data"
 	"fund/global"
 	"fund/util"
+	"os"
+	"sort"
+	"strconv"
+	"strings"
+
 	"github.com/go-echarts/go-echarts/v2/charts"
 	"github.com/go-echarts/go-echarts/v2/opts"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	tb "github.com/olekukonko/tablewriter"
 	"github.com/spf13/cast"
-	"os"
-	"sort"
-	"strconv"
-	"strings"
 )
 
-func TVReply(update tgbotapi.Update)  {
-	tvs := []string{"young-sheldon", "ted-lasso", "billions"}
+func TVReply(update tgbotapi.Update) {
 
-	res := "小谢尔顿 第四季\n" + data.GetTVData(tvs[0]) + "\n"
-	res = res + "足球教练 第二季\n" + data.GetTVData(tvs[1]) + "\n"
-	res = res + "亿万 第五季\n" + data.GetTVData(tvs[2])
+	tvs := map[string]string{
+		"young-sheldon": "小谢尔顿",
+		// "ted-lasso":     "足球教练",
+		// "billions":      "亿万",
+	}
+
+	res := ""
+	for engName, chName := range tvs {
+		res = res + chName + "\n" + data.GetTVData(engName) + "\n"
+	}
 
 	TextReply(update, res)
 }
@@ -104,7 +111,7 @@ func GlobalIndexReply(update tgbotapi.Update) {
 	//return "```"+tableString.String()+"```"
 }
 
-func ChartsReply(update tgbotapi.Update)  {
+func ChartsReply(update tgbotapi.Update) {
 	//chatID := update.Message.Chat.ID
 
 	pie := charts.NewPie()
@@ -189,8 +196,8 @@ func HoldReply(update tgbotapi.Update) {
 		estimateRate := cast.ToFloat64(raw.Gszzl)
 
 		hr = append(hr, data.HoldReply{
-			Code:  raw.Fundcode,
-			Name:  util.ShortenFundName(raw.Name),
+			Code: raw.Fundcode,
+			Name: util.ShortenFundName(raw.Name),
 			//Name: raw.Name,
 			Rate:  estimateRate,
 			Price: estimateValue,
@@ -206,7 +213,7 @@ func HoldReply(update tgbotapi.Update) {
 				h.Shares = f.Shares
 				h.LastPrice = data.LastPrice(f.Code)
 				h.Earn = h.Shares * (h.Price - h.Cost)
-				h.TodayEarn = h.Shares * h.LastPrice * h.Rate/100
+				h.TodayEarn = h.Shares * h.LastPrice * h.Rate / 100
 				h.Cap = h.Price * h.Shares
 			}
 		}
@@ -227,7 +234,7 @@ func HoldReply(update tgbotapi.Update) {
 	})
 
 	btc := data.GetBitcoin().CoinData[0]
-	q := btc.Quote.USD.Price*6.5
+	q := btc.Quote.USD.Price * 6.5
 	bc := 4000.0
 	btcRow := fmt.Sprintf("%.1f, %.2f, %.1f, 比特币", q*holdFunds.Bitcoin-bc, (q*holdFunds.Bitcoin-bc)/bc*100, bc)
 	reply = append(reply, strings.Split(btcRow, ", "))
@@ -247,7 +254,6 @@ func HoldReply(update tgbotapi.Update) {
 	TextReply(update, "<pre>"+tableString.String()+"</pre>")
 	//return "```"+tableString.String()+"```"
 }
-
 
 func FundWatch(update tgbotapi.Update) {
 	chatID := update.Message.Chat.ID
@@ -278,4 +284,3 @@ func FundUnwatch(update tgbotapi.Update) {
 		TextReply(update, "Invalid fundCode !")
 	}
 }
-
