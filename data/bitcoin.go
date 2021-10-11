@@ -22,8 +22,14 @@ func GetBitcoin() BitcoinRaw {
 	req.Header.Add("Cookie", "__cfduid=d90bb5e0c15aa0f9f956eca4afd34692e1590303661")
 
 	res, err := client.Do(req)
+	if err != nil {
+		log.Error("Get bitcoin error", err)
+	}
 	defer res.Body.Close()
 	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		log.Error("Read bitcoin error", err)
+	}
 
 	//fmt.Println(string(body))
 

@@ -18,11 +18,10 @@ import (
 // ^HSI
 
 func IndexData(indexCode string, ch chan Meta) {
-	url := "https://query1.finance.yahoo.com/v8/finance/chart/"+indexCode+"?range=2m"
+	url := "https://query1.finance.yahoo.com/v8/finance/chart/" + indexCode + "?range=2m"
 	method := "GET"
 
-	client := &http.Client {
-	}
+	client := &http.Client{}
 	req, err := http.NewRequest(method, url, nil)
 
 	if err != nil {
@@ -31,8 +30,15 @@ func IndexData(indexCode string, ch chan Meta) {
 	req.Header.Add("Cookie", "B=8t0kdm1fdretn&b=3&s=lf")
 
 	res, err := client.Do(req)
+	if err != nil {
+		log.Error("Get indices error", err)
+	}
 	defer res.Body.Close()
+
 	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		log.Error("Read indices error", err)
+	}
 
 	//fmt.Println(string(body))
 

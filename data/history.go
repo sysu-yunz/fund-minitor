@@ -83,8 +83,14 @@ func GetHistoryRaw(fundCode string, size int) []byte {
 	req.Header.Add("Cookie", " EMFUND1=null; EMFUND2=null; EMFUND3=null; EMFUND4=null; EMFUND5=null; EMFUND6=null; EMFUND7=null; EMFUND8=null; EMFUND0=null; st_si=22135545403150; st_asi=delete; EMFUND9=05-24 14:17:24@#$%u62DB%u5546%u53CC%u503A%u589E%u5F3A%u503A%u5238%28LOF%29C@%23%24161716; st_pvi=96899578487091; st_sp=2020-05-24%2013%3A54%3A33; st_inirUrl=https%3A%2F%2Fwww.google.com.hk%2F; st_sn=6; st_psi=20200524142034293-0-7250379601")
 
 	res, err := client.Do(req)
+	if err != nil {
+		log.Error("Get history error", err)
+	}
 	defer res.Body.Close()
 	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		log.Error("Get history error", err)
+	}
 
 	//fmt.Println(string(body))
 	return body

@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"fund/global"
 	"fund/log"
-	"github.com/spf13/cast"
 	"io/ioutil"
 	"net/http"
 	"regexp"
+
+	"github.com/spf13/cast"
 )
 
 func LastPrice(fc string) float64 {
@@ -30,9 +31,15 @@ func GetRealTime(fundCode string, ch chan RealTimeRaw) {
 		fmt.Println(err)
 	}
 	res, err := client.Do(req)
+	if err != nil || res == nil {
+		log.Error("Get realtime error", err)
+	}
 	defer res.Body.Close()
 	if res != nil && res.StatusCode == http.StatusOK {
 		body, err := ioutil.ReadAll(res.Body)
+		if err != nil {
+			log.Error("Read realtime error", err)
+		}
 
 		log.Debug("Real time data resp %+v", string(body))
 

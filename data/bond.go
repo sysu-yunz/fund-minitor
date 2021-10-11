@@ -19,8 +19,14 @@ func GetChina10YearBondYield() BondDataRaw {
 		fmt.Println(err)
 	}
 	res, err := client.Do(req)
+	if err != nil {
+		log.Error("Get bond error", err)
+	}
 	defer res.Body.Close()
 	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		log.Error("Read bitcoin error", err)
+	}
 
 	var bond BondDataRaw
 	err = json.Unmarshal(body, &bond)
