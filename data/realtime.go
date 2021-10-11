@@ -31,10 +31,17 @@ func GetRealTime(fundCode string, ch chan RealTimeRaw) {
 		fmt.Println(err)
 	}
 	res, err := client.Do(req)
-	if err != nil || res == nil {
-		log.Error("Get realtime error", err)
+
+	if err != nil {
+		log.Error("Get tv error", err)
 	}
+
+	if res == nil || res.Body == nil {
+		log.Error("[tv res] error")
+	}
+
 	defer res.Body.Close()
+
 	if res != nil && res.StatusCode == http.StatusOK {
 		body, err := ioutil.ReadAll(res.Body)
 		if err != nil {
