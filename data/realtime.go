@@ -30,6 +30,7 @@ func GetRealTime(fundCode string, ch chan RealTimeRaw) {
 	if err != nil {
 		fmt.Println(err)
 	}
+
 	res, err := client.Do(req)
 
 	if err != nil {
@@ -39,8 +40,6 @@ func GetRealTime(fundCode string, ch chan RealTimeRaw) {
 	if res == nil || res.Body == nil {
 		log.Error("[tv res] error")
 	}
-
-	defer res.Body.Close()
 
 	if res != nil && res.StatusCode == http.StatusOK {
 		body, err := ioutil.ReadAll(res.Body)
@@ -66,6 +65,8 @@ func GetRealTime(fundCode string, ch chan RealTimeRaw) {
 	} else {
 		log.Error("Http response %+v ", res)
 	}
+
+	defer res.Body.Close()
 
 	ch <- realTimeData
 }
