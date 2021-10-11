@@ -3,16 +3,17 @@ package data
 import (
 	"fmt"
 	ll "fund/log"
-	"github.com/PuerkitoBio/goquery"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/PuerkitoBio/goquery"
 )
 
 func GetTVData(tvName string) string {
-	url := "https://www.episodate.com/tv-show/"+tvName
+	url := "https://www.episodate.com/tv-show/" + tvName
 	doc := reqHTML(url)
 
 	return findLatestEpisode(doc)
@@ -20,9 +21,9 @@ func GetTVData(tvName string) string {
 
 // copied from https://github.com/sysu-yunz/doubanAnalysis/blob/main/main.go
 func reqHTML(url string) *goquery.Document {
-	client := &http.Client {}
+	client := &http.Client{}
 
-	req, err := http.NewRequest("GET", url , nil)
+	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		ll.Error("[NewRequest]错误")
 	}
@@ -36,14 +37,19 @@ func reqHTML(url string) *goquery.Document {
 	ll.Info("正在请求网页: %s", url)
 	res, err := client.Do(req)
 
-	if res == nil {
-		ll.Error("[tv res] error")
-	} else {
+	if err != nil {
+		ll.Error("Get tv error", err)
+	}
 
+	if res == nil || res.Body == nil {
+		ll.Error("[tv res] error")
 	}
 
 	defer res.Body.Close()
 	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		ll.Error("Read tv error", err)
+	}
 	htmlContent := fmt.Sprintf("%s\n", body)
 
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(htmlContent))
@@ -64,7 +70,7 @@ func findLatestEpisode(doc *goquery.Document) string {
 
 		dd := parseTVDate(d)
 
-		if dd.Before(time.Now().Add(-240*time.Hour)) {
+		if dd.Before(time.Now().Add(-240 * time.Hour)) {
 			ll.Info("[TVDate] Skip old episode %v", dd)
 		} else if dd.After(time.Now()) && dd.Before(time.Now().Add(168*time.Hour)) {
 			res = res + "\n" + t + "\n" + d + "  《====" + "\n"
