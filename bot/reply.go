@@ -20,7 +20,8 @@ import (
 func TVReply(update tgbotapi.Update) {
 
 	tvs := map[string]string{
-		"young-sheldon": "小谢尔顿",
+		"young-sheldon":                    "小谢尔顿",
+		"yellowstone-paramount-television": "黄石",
 		// "ted-lasso":     "足球教练",
 		// "billions":      "亿万",
 	}
