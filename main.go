@@ -36,6 +36,7 @@ func init() {
 // }
 
 func main() {
+	// local
 	if len(os.Args) > 1 {
 		go cron.Update()
 		bot.Run()

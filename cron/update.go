@@ -11,8 +11,8 @@ import (
 func Update() {
 	go func() {
 		c := cron.New()
-		c.AddFunc("@every 5m", func() {
-			fmt.Println("Every second")
+		c.AddFunc("@every 1d", func() {
+			fmt.Println("定时发邮件任务")
 			e := &notifier.Email{
 				To:      "dukeyunz@hotmail.com",
 				Subject: "Fund notification",
