@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"fund/bot"
 	"fund/config"
 	"fund/cron"
@@ -30,12 +31,12 @@ func init() {
 }
 
 // func main() {
-// 	global.Bot.RemoveWebhook()
 // 	bot.Run()
 // }
 
 func main() {
 	port := config.EnvVariable("PORT")
+	fmt.Println("Server started on port:", port)
 	_, err = global.Bot.SetWebhook(tgbotapi.NewWebhook("https://thawing-scrubland-62700.herokuapp.com/" + global.Bot.Token))
 	if err != nil {
 		log.Fatal("%v", err)
