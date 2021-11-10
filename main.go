@@ -9,6 +9,7 @@ import (
 	"fund/global"
 	"fund/log"
 	"net/http"
+	"os"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
@@ -35,18 +36,23 @@ func init() {
 // }
 
 func main() {
-	port := config.EnvVariable("PORT")
-	fmt.Println("Server started on port:", port)
-	_, err = global.Bot.SetWebhook(tgbotapi.NewWebhook("https://thawing-scrubland-62700.herokuapp.com/" + global.Bot.Token))
-	if err != nil {
-		log.Fatal("%v", err)
-	}
+	if len(os.Args) > 1 {
+		go cron.Update()
+		bot.Run()
+	} else {
+		port := config.EnvVariable("PORT")
+		fmt.Println("Server started on port:", port)
+		_, err = global.Bot.SetWebhook(tgbotapi.NewWebhook("https://thawing-scrubland-62700.herokuapp.com/" + global.Bot.Token))
+		if err != nil {
+			log.Fatal("%v", err)
+		}
 
-	updates := global.Bot.ListenForWebhook("/" + global.Bot.Token)
-	go http.ListenAndServe("0.0.0.0"+":"+port, nil)
-	go cron.Update()
+		updates := global.Bot.ListenForWebhook("/" + global.Bot.Token)
+		go http.ListenAndServe("0.0.0.0"+":"+port, nil)
+		go cron.Update()
 
-	for update := range updates {
-		bot.Handle(update)
+		for update := range updates {
+			bot.Handle(update)
+		}
 	}
 }

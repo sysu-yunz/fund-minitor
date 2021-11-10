@@ -11,13 +11,13 @@ import (
 func Update() {
 	go func() {
 		c := cron.New()
-		c.AddFunc("@every 1h", func() {
+		c.AddFunc("@every 5m", func() {
 			fmt.Println("Every second")
 			e := &notifier.Email{
 				To:      "dukeyunz@hotmail.com",
 				Subject: "Fund notification",
 			}
-			e.Send("this is a test email")
+			e.Send("Test email from heroku every 5min.")
 		})
 		c.Start()
 		// select {}
