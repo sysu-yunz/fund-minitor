@@ -3,10 +3,11 @@ package main
 import (
 	"fund/bot"
 	"fund/config"
-	"fund/cron"
 	"fund/db"
 	"fund/global"
 	"fund/log"
+
+	http "net/http"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
@@ -28,13 +29,27 @@ func init() {
 	global.MgoDB = db.NewDB(mgoPwd)
 }
 
-func main() {
-	cron.Update()
-	bot.Run()
+// func main() {
+// 	cron.Update()
+// 	bot.Run()
 
-	// TODO: Email
-	//e := &email.Email{
-	//	To: "dukeyunz@hotmail.com",
-	//	Subject: "Fund notification",
-	//}
+// 	// TODO: Email
+// 	//e := &email.Email{
+// 	//	To: "dukeyunz@hotmail.com",
+// 	//	Subject: "Fund notification",
+// 	//}
+// }
+
+func main() {
+	_, err = global.Bot.SetWebhook(tgbotapi.NewWebhook("https://thawing-scrubland-62700.herokuapp.com:8443/" + global.Bot.Token))
+	if err != nil {
+		log.Fatal("%v", err)
+	}
+
+	updates := global.Bot.ListenForWebhook("/" + global.Bot.Token)
+	go http.ListenAndServe("0.0.0.0:8443", nil)
+
+	for update := range updates {
+		bot.Handle(update)
+	}
 }
