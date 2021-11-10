@@ -3,12 +3,11 @@ package main
 import (
 	"fund/bot"
 	"fund/config"
+	"fund/cron"
 	"fund/db"
 	"fund/global"
 	"fund/log"
-	"os"
-
-	http "net/http"
+	"net/http"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
@@ -31,18 +30,12 @@ func init() {
 }
 
 // func main() {
-// 	cron.Update()
+// 	global.Bot.RemoveWebhook()
 // 	bot.Run()
-
-// 	// TODO: Email
-// 	//e := &email.Email{
-// 	//	To: "dukeyunz@hotmail.com",
-// 	//	Subject: "Fund notification",
-// 	//}
 // }
 
 func main() {
-	port := os.Getenv("PORT")
+	port := config.EnvVariable("PORT")
 	_, err = global.Bot.SetWebhook(tgbotapi.NewWebhook("https://thawing-scrubland-62700.herokuapp.com/" + global.Bot.Token))
 	if err != nil {
 		log.Fatal("%v", err)
@@ -50,6 +43,7 @@ func main() {
 
 	updates := global.Bot.ListenForWebhook("/" + global.Bot.Token)
 	go http.ListenAndServe("0.0.0.0"+":"+port, nil)
+	go cron.Update()
 
 	for update := range updates {
 		bot.Handle(update)

@@ -4,3 +4,4 @@ hold - 持仓信息
 tv - 获取美剧更新时间
 watch - 加入观察列表
 unwatch - 取消观察
+kpl - 获取KPL首发名单
