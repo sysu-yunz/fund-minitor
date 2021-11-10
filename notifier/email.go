@@ -5,8 +5,9 @@ import (
 	"fmt"
 	"fund/config"
 	"fund/log"
-	"gopkg.in/gomail.v2"
 	"net/smtp"
+
+	"gopkg.in/gomail.v2"
 )
 
 type Email struct {
@@ -21,7 +22,7 @@ func (e *Email) Send(info string) error {
 }
 
 func (e *Email) sendEmailV2(info string) {
-	pwd := config.ViperEnvVariable("EMAIL_PWD")
+	pwd := config.EnvVariable("EMAIL_PWD")
 	d := gomail.NewDialer("smtp.qq.com", 25, "dukeyunz@foxmail.com", pwd)
 
 	msg := gomail.NewMessage()

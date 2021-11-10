@@ -3,6 +3,7 @@ package main
 import (
 	"fund/bot"
 	"fund/config"
+	"fund/cron"
 	"fund/db"
 	"fund/global"
 	"fund/log"
@@ -15,7 +16,7 @@ var (
 )
 
 func init() {
-	botToken := config.ViperEnvVariable("BOT_TOKEN")
+	botToken := config.EnvVariable("BOT_TOKEN")
 	global.Bot, err = tgbotapi.NewBotAPI(botToken)
 	if err != nil {
 		log.Fatal("Init Bot %+v", err)
@@ -23,11 +24,12 @@ func init() {
 	global.Bot.Debug = true
 	log.Info("Authorized on account %s", global.Bot.Self.UserName)
 
-	mgoPwd := config.ViperEnvVariable("MGO_PWD")
+	mgoPwd := config.EnvVariable("MGO_PWD")
 	global.MgoDB = db.NewDB(mgoPwd)
 }
 
 func main() {
+	cron.Update()
 	bot.Run()
 
 	// TODO: Email

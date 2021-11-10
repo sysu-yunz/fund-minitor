@@ -1,13 +1,26 @@
 package config
 
 import (
-	"github.com/spf13/viper"
 	"log"
+	"os"
+
+	"github.com/spf13/viper"
 )
+
+func EnvVariable(key string) string {
+
+	// if .env file exist read from .env
+	if _, err := os.Stat("./config/.env"); err == nil {
+		return viperEnvVariable(key)
+	} else {
+		// else read from system
+		return os.Getenv(key)
+	}
+}
 
 // use viper package to read .env file
 // return the value of the key
-func ViperEnvVariable(key string) string {
+func viperEnvVariable(key string) string {
 
 	//dir, _ := os.Getwd()
 	//log.Println(dir)
