@@ -2,8 +2,9 @@ package util
 
 import (
 	"fund/log"
-	"github.com/yanyiwu/gojieba"
 	"strings"
+
+	"github.com/yanyiwu/gojieba"
 )
 
 func ShortenFundName(fundName string) string {
