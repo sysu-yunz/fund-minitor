@@ -43,7 +43,7 @@ func init() {
 
 func main() {
 	port := os.Getenv("PORT")
-	_, err = global.Bot.SetWebhook(tgbotapi.NewWebhook("https://thawing-scrubland-62700.herokuapp.com:" + port + "/" + global.Bot.Token))
+	_, err = global.Bot.SetWebhook(tgbotapi.NewWebhook("https://thawing-scrubland-62700.herokuapp.com:" + "/" + global.Bot.Token))
 	if err != nil {
 		log.Fatal("%v", err)
 	}
