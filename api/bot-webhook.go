@@ -6,6 +6,7 @@ import (
 	"fund/db"
 	"fund/global"
 	"fund/log"
+	"fund/notifier"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -32,6 +33,18 @@ func init() {
 
 func Handler(w http.ResponseWriter, req *http.Request) {
 	bytes, _ := ioutil.ReadAll(req.Body)
+
+	// if url endpoint is /reminder then send email to me
+	if req.URL.Path == "/reminder" {
+		log.Info("Reminder")
+		e := &notifier.Email{
+			To:      "dukeyunz@hotmail.com",
+			Subject: "Fund notification",
+		}
+		e.Send("Test email from vercel.")
+		return
+	}
+
 	var update tgbotapi.Update
 	err = json.Unmarshal(bytes, &update)
 	if err != nil {
