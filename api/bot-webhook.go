@@ -34,6 +34,8 @@ func init() {
 func Handler(w http.ResponseWriter, req *http.Request) {
 	bytes, _ := ioutil.ReadAll(req.Body)
 
+	log.Debug("req url path %s", req.URL.Path)
+
 	// if url endpoint is /reminder then send email to me
 	if req.URL.Path == "/reminder" {
 		log.Info("Reminder")
