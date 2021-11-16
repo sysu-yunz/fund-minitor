@@ -43,7 +43,7 @@ func Handler(w http.ResponseWriter, req *http.Request) {
 			To:      "dukeyunz@hotmail.com",
 			Subject: "Fund notification",
 		}
-		e.Send("Test email from vercel.")
+		go e.Send("Test email from vercel.")
 		log.Info("Reminder sent")
 		return
 	}
