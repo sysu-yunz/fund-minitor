@@ -37,7 +37,7 @@ func Handler(w http.ResponseWriter, req *http.Request) {
 	log.Debug("req url path %s", req.URL.Path)
 
 	// if url endpoint is /reminder then send email to me
-	if req.URL.Path == "/reminder" {
+	if req.URL.Path == "api/bot-webhook/reminder" {
 		log.Info("Reminder")
 		e := &notifier.Email{
 			To:      "dukeyunz@hotmail.com",
