@@ -35,6 +35,7 @@ func Handler(w http.ResponseWriter, req *http.Request) {
 	bytes, _ := ioutil.ReadAll(req.Body)
 
 	log.Info("%s", string(bytes))
+	log.Info("%+v", len(bytes))
 
 	if len(bytes) == 0 {
 		log.Info("Reminder")
