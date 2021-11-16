@@ -88,4 +88,5 @@ func webhookHandler(c *gin.Context) {
 
 	// to monitor changes run: heroku logs --tail
 	log.Info("From: %+v Text: %+v\n", update.Message.From, update.Message.Text)
+	bot.Handle(update)
 }
