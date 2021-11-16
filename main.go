@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"fund/bot"
 	"fund/config"
@@ -9,9 +10,11 @@ import (
 	"fund/global"
 	"fund/log"
 	"fund/notifier"
+	"io/ioutil"
 	"net/http"
 	"os"
 
+	"github.com/gin-gonic/gin"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
@@ -46,25 +49,38 @@ func main() {
 			log.Fatal("%v", err)
 		}
 
-		updates := global.Bot.ListenForWebhook("/" + global.Bot.Token)
-		go http.ListenAndServe("0.0.0.0"+":"+port, SendEmail{})
-		go cron.Update()
+		router := gin.New()
+		router.Use(gin.Logger())
+		router.Use(gin.Recovery())
 
-		for update := range updates {
-			bot.Handle(update)
-		}
+		router.POST("/"+global.Bot.Token, webhookHandler)
+		router.GET("/reminder", func(c *gin.Context) {
+			e := &notifier.Email{
+				To:      "dukeyunz@hotmail.com",
+				Subject: "Fund notification",
+			}
+			e.Send("Test email from heroku every 5min.")
+			c.String(http.StatusOK, "ok")
+		})
 	}
 }
 
-type SendEmail struct{}
+func webhookHandler(c *gin.Context) {
+	defer c.Request.Body.Close()
 
-func (SendEmail) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	log.Info("%v", r)
-	fmt.Println("定时发邮件任务")
-	e := &notifier.Email{
-		To:      "dukeyunz@hotmail.com",
-		Subject: "Fund notification",
+	bytes, err := ioutil.ReadAll(c.Request.Body)
+	if err != nil {
+		log.Error("%+v", err)
+		return
 	}
-	e.Send("Test email from heroku every 5min.")
-	w.Write([]byte("ok"))
+
+	var update tgbotapi.Update
+	err = json.Unmarshal(bytes, &update)
+	if err != nil {
+		log.Error("%+v", err)
+		return
+	}
+
+	// to monitor changes run: heroku logs --tail
+	log.Info("From: %+v Text: %+v\n", update.Message.From, update.Message.Text)
 }
