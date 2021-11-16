@@ -5,13 +5,11 @@ import (
 	"fmt"
 	"fund/bot"
 	"fund/config"
-	"fund/cron"
 	"fund/db"
 	"fund/global"
+	"fund/job"
 	"fund/log"
-	"fund/notifier"
 	"io/ioutil"
-	"net/http"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -38,7 +36,7 @@ func init() {
 func main() {
 	// local
 	if len(os.Args) > 1 {
-		go cron.Update()
+		go job.Update()
 		bot.Run()
 	} else {
 		port := config.EnvVariable("PORT")
@@ -54,14 +52,7 @@ func main() {
 		router.Use(gin.Recovery())
 
 		router.POST("/"+global.Bot.Token, webhookHandler)
-		router.GET("/reminder", func(c *gin.Context) {
-			e := &notifier.Email{
-				To:      "dukeyunz@hotmail.com",
-				Subject: "Fund notification",
-			}
-			e.Send("Test email from heroku every 5min.")
-			c.String(http.StatusOK, "ok")
-		})
+		router.GET("/daily-report", job.DailyReport)
 
 		err := router.Run(":" + port)
 		if err != nil {

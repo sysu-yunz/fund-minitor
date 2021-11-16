@@ -6,7 +6,6 @@ import (
 	"fund/db"
 	"fund/global"
 	"fund/log"
-	"fund/notifier"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -33,20 +32,6 @@ func init() {
 
 func Handler(w http.ResponseWriter, req *http.Request) {
 	bytes, _ := ioutil.ReadAll(req.Body)
-
-	log.Info("%s", string(bytes))
-	log.Info("%+v", len(bytes))
-
-	if len(bytes) == 2 {
-		log.Info("Reminder")
-		e := &notifier.Email{
-			To:      "dukeyunz@hotmail.com",
-			Subject: "Fund notification",
-		}
-		go e.Send("Test email from vercel.")
-		log.Info("Reminder sent")
-		return
-	}
 
 	var update tgbotapi.Update
 	err = json.Unmarshal(bytes, &update)
