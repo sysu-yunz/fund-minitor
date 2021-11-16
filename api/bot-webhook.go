@@ -33,6 +33,9 @@ func init() {
 
 func Handler(w http.ResponseWriter, req *http.Request) {
 	bytes, _ := ioutil.ReadAll(req.Body)
+
+	log.Info("%s", string(bytes))
+
 	if req.Body == nil {
 		log.Info("Reminder")
 		e := &notifier.Email{
@@ -40,13 +43,14 @@ func Handler(w http.ResponseWriter, req *http.Request) {
 			Subject: "Fund notification",
 		}
 		e.Send("Test email from vercel.")
+		log.Info("Reminder sent")
 		return
 	}
 
 	var update tgbotapi.Update
 	err = json.Unmarshal(bytes, &update)
 	if err != nil {
-		log.Error("Unmarshal update: ", err)
+		log.Error("Unmarshal update: %v", err)
 	}
 	log.Debug("Update: %+v %+v", update.Message.Text, update)
 
