@@ -53,7 +53,7 @@ func main() {
 		router.Use(gin.Logger())
 		router.Use(gin.Recovery())
 
-		router.POST("/"+global.Bot.Token, webhookHandler)
+		// router.POST("/"+global.Bot.Token, webhookHandler)
 		router.GET("/hello", hello)
 		router.GET("/reminder", func(c *gin.Context) {
 			e := &notifier.Email{
