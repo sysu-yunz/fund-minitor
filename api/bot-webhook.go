@@ -37,7 +37,7 @@ func Handler(w http.ResponseWriter, req *http.Request) {
 	log.Info("%s", string(bytes))
 	log.Info("%+v", len(bytes))
 
-	if len(bytes) == 0 {
+	if len(bytes) == 2 {
 		log.Info("Reminder")
 		e := &notifier.Email{
 			To:      "dukeyunz@hotmail.com",
