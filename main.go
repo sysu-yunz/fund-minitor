@@ -9,7 +9,9 @@ import (
 	"fund/db"
 	"fund/global"
 	"fund/log"
+	"fund/notifier"
 	"io/ioutil"
+	"net/http"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -52,14 +54,19 @@ func main() {
 		router.Use(gin.Recovery())
 
 		router.POST("/"+global.Bot.Token, webhookHandler)
-		// router.GET("/reminder", func(c *gin.Context) {
-		// 	e := &notifier.Email{
-		// 		To:      "dukeyunz@hotmail.com",
-		// 		Subject: "Fund notification",
-		// 	}
-		// 	e.Send("Test email from heroku every 5min.")
-		// 	c.String(http.StatusOK, "ok")
-		// })
+		router.GET("/reminder", func(c *gin.Context) {
+			e := &notifier.Email{
+				To:      "dukeyunz@hotmail.com",
+				Subject: "Fund notification",
+			}
+			e.Send("Test email from heroku every 5min.")
+			c.String(http.StatusOK, "ok")
+		})
+
+		err := router.Run(":" + port)
+		if err != nil {
+			log.Error("%v", err)
+		}
 	}
 }
 
