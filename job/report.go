@@ -7,7 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// find schedulers in https://cronhub.io/schedulers
+// find schedulers in https://www.easycron.com/
 
 func DailyReport(c *gin.Context) {
 	e := &notifier.Email{
