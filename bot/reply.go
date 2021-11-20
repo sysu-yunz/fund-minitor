@@ -13,6 +13,7 @@ import (
 	"github.com/go-echarts/go-echarts/v2/charts"
 	"github.com/go-echarts/go-echarts/v2/opts"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
+	"github.com/mmcdole/gofeed"
 	tb "github.com/olekukonko/tablewriter"
 	"github.com/spf13/cast"
 )
@@ -284,4 +285,27 @@ func FundUnwatch(update tgbotapi.Update) {
 	} else {
 		TextReply(update, "Invalid fundCode !")
 	}
+}
+
+func StockReply(update tgbotapi.Update) {
+	arguments := update.Message.CommandArguments()
+
+	stockData := data.GetStock(arguments)
+
+	TextReply(update, fmt.Sprintf("%v", stockData.Data.Quote.Current))
+
+}
+
+func KPL(update tgbotapi.Update) {
+	fp := gofeed.NewParser()
+	feed, _ := fp.ParseURL("https://yunz-rss.vercel.app/weibo/user/6074356560")
+	rpl := "还未更新"
+	for _, it := range feed.Items {
+		if strings.Contains(it.Title, "首发名单") {
+			fmt.Println(it.Link)
+			rpl = it.Link
+		}
+	}
+
+	TextReply(update, rpl)
 }
