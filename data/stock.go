@@ -3,6 +3,8 @@ package data
 import (
 	"encoding/json"
 	"fmt"
+	"fund/db"
+	"fund/global"
 	"fund/log"
 	"io/ioutil"
 	"net/http"
@@ -47,6 +49,58 @@ func GetStock(code string) RealTimeStockData {
 	}
 
 	return d
+}
+
+func GetStockList() {
+	page := 1
+	size := 200
+	// CN sh_zs
+	// HK hk
+	// US us
+	market := "US"
+	board := "us"
+	client := &http.Client{}
+
+	global.MgoDB.DeleteStockList()
+
+	// request data until all stocks are fetched
+	for {
+		url := fmt.Sprintf("https://xueqiu.com/service/v5/stock/screener/quote/list?page=%d&size=%d&order=desc&orderby=percent&order_by=percent&market=%s&type=%s", page, size, market, board)
+		req, err := http.NewRequest("GET", url, nil)
+		if err != nil {
+			log.Error("request init error %v", err)
+		}
+
+		req.Header.Add("Cookie", "acw_tc=2760829d16374557306416084eb60952ba53cd7be6edbdb9dbed52354505c6; s=c0159r1h9d; xq_a_token=ad254175b8f79f3ce1be51812b24adb083dc9851; xq_id_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1aWQiOi0xLCJpc3MiOiJ1YyIsImV4cCI6MTYzOTc2NDY2MCwiY3RtIjoxNjM3NDU1NzEwMDQwLCJjaWQiOiJkOWQwbjRBWnVwIn0.h50zlh-D8e7bAckr1HYbAn8eXyQ30p1Q4xGP1Uvu8F0FtTnEwbketJh-ioaj_RonipQyue_Eu4rQI26cOYB6dfWRcMhSmeieGgQ5723y9lcbyEqAIF5WJ25gEUgmEBXcPmRzCKW1VlFHiQe4kBM3HAhAnOHz0dt50d24ccKGP3cfE7NRjjWWdv1NBm0ch3pKJ_XtYV9epOPKA-fqUuekOfukwOQJeT-jhAKs93EY0yNhRjkfqMGbaiZqEx9D0R1t1eKIusZ6zcMqbF5TaWFzlAnUVAiaGoOxBlC-HWLZhfrBa_OFa5FTg3KoDG534rVet6JUxCoqOfoOw36jcSJPpA; xq_r_token=55944e6d0310d70bf0039e421a9a722032a84077")
+
+		res, err := client.Do(req)
+		if err != nil {
+			log.Error("request error %v", err)
+		}
+
+		defer res.Body.Close()
+
+		body, err := ioutil.ReadAll(res.Body)
+		if err != nil {
+			log.Error("read body error %v", err)
+		}
+
+		stocks := db.StockList{}
+		err = json.Unmarshal(body, &stocks)
+		if err != nil {
+			log.Error("unmarshal error %v", err)
+		}
+
+		global.MgoDB.UpdateStockList(stocks)
+
+		log.Info("********************** %v *************** %v", stocks.Data.Count, page*size)
+
+		if page*size > stocks.Data.Count {
+			break
+		}
+
+		page = page + 1
+	}
 }
 
 type RealTimeStockData struct {

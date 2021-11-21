@@ -3,11 +3,12 @@ package db
 import (
 	"context"
 	"fund/log"
+	"time"
+
 	"github.com/globalsign/mgo/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
-	"time"
 )
 
 type MgoC struct {
@@ -15,7 +16,7 @@ type MgoC struct {
 }
 
 func NewDB(pwd string) *MgoC {
-	uri := "mongodb+srv://chengqian"+":"+pwd+"@cluster0-01hyt.azure.mongodb.net/fund?retryWrites=true&w=majority"
+	uri := "mongodb+srv://chengqian" + ":" + pwd + "@cluster0-01hyt.azure.mongodb.net/fund?retryWrites=true&w=majority"
 	//uri := "mongodb://127.0.0.1:27017"
 	ctx := context.TODO()
 	clientOptions := options.Client().ApplyURI(uri)
@@ -43,7 +44,7 @@ func NewDB(pwd string) *MgoC {
 func (c *MgoC) ValidFundCode(w string) (FundInfoDB, bool) {
 	col := c.Database("fund").Collection("basic")
 	fund := FundInfoDB{}
-	err := col.FindOne(context.TODO(), bson.M{"fundCode":w}).Decode(&fund)
+	err := col.FindOne(context.TODO(), bson.M{"fundCode": w}).Decode(&fund)
 	if err != nil {
 		log.Error("InsertWatch %+v", err)
 		return FundInfoDB{}, false
@@ -52,9 +53,9 @@ func (c *MgoC) ValidFundCode(w string) (FundInfoDB, bool) {
 	return fund, true
 }
 
-func (c *MgoC) FundWatched(cid int64, w string)  bool {
+func (c *MgoC) FundWatched(cid int64, w string) bool {
 	col := c.Database("fund").Collection("watch")
-	count, err := col.CountDocuments(context.TODO(), bson.M{"chatID":cid, "watch":w})
+	count, err := col.CountDocuments(context.TODO(), bson.M{"chatID": cid, "watch": w})
 	if err != nil {
 		log.Error("Fund watch count %+v", err)
 	}
@@ -95,7 +96,7 @@ func (c *MgoC) GetWatchList(chatID int64) []WatchDB {
 	defer cancel()
 
 	col := c.Database("fund").Collection("watch")
-	cur, err := col.Find(ctx, bson.M{"chatID":chatID})
+	cur, err := col.Find(ctx, bson.M{"chatID": chatID})
 	if err != nil {
 		log.Error("Finding watches %+v", err)
 	}
@@ -104,7 +105,9 @@ func (c *MgoC) GetWatchList(chatID int64) []WatchDB {
 	for cur.Next(ctx) {
 		var result WatchDB
 		err := cur.Decode(&result)
-		if err != nil { log.Error("Decode watch %+v", err) }
+		if err != nil {
+			log.Error("Decode watch %+v", err)
+		}
 		results = append(results, result)
 	}
 
@@ -116,11 +119,13 @@ func (c *MgoC) GetHolding(chatID int64) Holdings {
 	defer cancel()
 
 	col := c.Database("fund").Collection("hold")
-	res := col.FindOne(ctx, bson.M{"chatID":chatID})
+	res := col.FindOne(ctx, bson.M{"chatID": chatID})
 
 	var result Holdings
 	err := res.Decode(&result)
-	if err != nil { log.Error("Decode watch %+v", err) }
+	if err != nil {
+		log.Error("Decode watch %+v", err)
+	}
 
 	return result
 }
@@ -134,4 +139,31 @@ func (c *MgoC) InsertHold(hold Holdings) {
 	}
 
 	log.Debug("Inserted hold %+v ", res)
+}
+
+func (c *MgoC) DeleteStockList() {
+	col := c.Database("fund").Collection("stock_us")
+	deleteRes, err := col.DeleteMany(context.TODO(), bson.M{})
+	if err != nil {
+		log.Error("Deleting stock %+v ", err)
+	}
+
+	log.Debug("Deleted stock %+v ", deleteRes)
+}
+
+func (c *MgoC) UpdateStockList(StockList StockList) {
+
+	col := c.Database("fund").Collection("stock_us")
+	// avoid type error in col.InsertMany
+	iStockList := make([]interface{}, len(StockList.Data.List))
+	for i, v := range StockList.Data.List {
+		iStockList[i] = v
+	}
+
+	insertRes, err := col.InsertMany(context.TODO(), iStockList)
+	if err != nil {
+		log.Error("Inserting stock %+v ", err)
+	}
+
+	log.Debug("Inserted stock %+v ", insertRes)
 }

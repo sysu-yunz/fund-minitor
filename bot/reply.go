@@ -292,8 +292,9 @@ func StockReply(update tgbotapi.Update) {
 
 	stockData := data.GetStock(arguments)
 
-	TextReply(update, fmt.Sprintf("%v", stockData.Data.Quote.Current))
+	q := stockData.Data.Quote
 
+	TextReply(update, fmt.Sprintf("current %v open %v change %v", q.Current, q.Open, q.Chg))
 }
 
 func KPL(update tgbotapi.Update) {
