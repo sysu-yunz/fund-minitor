@@ -235,6 +235,10 @@ func HoldReply(update tgbotapi.Update) {
 		return iF > jF
 	})
 
+	vk := data.GetStock("SZ000002").Data.Quote
+	vkRow := fmt.Sprintf("%.1f, %.2f, %.1f, 万科", (vk.Current-22.372)*500, vk.Chg, 11186.0)
+	reply = append(reply, strings.Split(vkRow, ", "))
+
 	btc := data.GetBitcoin().CoinData[0]
 	q := btc.Quote.USD.Price * 6.5
 	bc := 3438.0
