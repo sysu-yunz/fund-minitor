@@ -13,11 +13,6 @@ import (
 // pass a hint to get stock symbol
 // hint can be either stock name or stock code like "万科A" or "sz002081"
 func GetSymbol(arg string) string {
-	// if arg start with "SZ" or "SH" return arg
-	if arg[0:2] == "SZ" || arg[0:2] == "SH" {
-		return arg
-	}
-
 	if res := global.MgoDB.SearchStock(arg, false); res != "" {
 		return res
 	}
