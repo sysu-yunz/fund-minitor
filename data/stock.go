@@ -18,7 +18,11 @@ func GetSymbol(arg string) string {
 		return arg
 	}
 
-	return global.MgoDB.FuzzySearchStock(arg)
+	if res := global.MgoDB.SearchStock(arg, false); res != "" {
+		return res
+	}
+
+	return global.MgoDB.SearchStock(arg, true)
 }
 
 func GetStock(code string) RealTimeStockData {

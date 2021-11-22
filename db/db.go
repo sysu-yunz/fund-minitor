@@ -169,18 +169,47 @@ func (c *MgoC) UpdateStockList(StockList StockList) {
 }
 
 // fuzzy search stock in stock list
-func (c *MgoC) FuzzySearchStock(arg string) string {
-	stock := StockInfo{}
+func (c *MgoC) SearchStock(arg string, fuzzy bool) string {
+	if s := c.findStock("", arg, fuzzy); s != "" {
+		return s
+	} else if s := c.findStock("hk", arg, fuzzy); s != "" {
+		return s
+	} else if s := c.findStock("us", arg, fuzzy); s != "" {
+		return s
+	} else {
+		return ""
+	}
+}
 
+func (c *MgoC) findStock(market string, arg string, fuzzy bool) string {
+	stock := StockInfo{}
 	col := c.Database("fund").Collection("stock")
-	// find one doc with name contains '万科' or symbol contains '300741'
+
+	if market != "" {
+		col = c.Database("fund").Collection("stock_" + market)
+	}
+
+	if fuzzy {
+		res := col.FindOne(context.TODO(), bson.M{"$or": []bson.M{
+			{"name": bson.M{"$regex": arg}},
+			{"symbol": bson.M{"$regex": arg}},
+		}}).Decode(&stock)
+		if res != nil {
+			log.Error("Stock not in %s market, finding it in %s %+v", market, market, res)
+			return ""
+		}
+
+		return stock.Symbol
+	}
+
+	// find doc name or symbol match
 	res := col.FindOne(context.TODO(), bson.M{"$or": []bson.M{
-		{"name": bson.M{"$regex": arg}},
-		{"symbol": bson.M{"$regex": arg}},
+		{"name": arg},
+		{"symbol": arg},
 	}}).Decode(&stock)
 
 	if res != nil {
-		log.Error("Fuzzy search stock %+v", res)
+		log.Error("Stock not in %s market, finding it in %s %+v", market, market, res)
 		return ""
 	}
 
