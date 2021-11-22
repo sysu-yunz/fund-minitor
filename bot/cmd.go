@@ -17,6 +17,7 @@ func Handle(update tgbotapi.Update) {
 
 	if update.Message != nil {
 		if update.Message.IsCommand() {
+			log.Info("Command %s", update.Message.Text)
 			switch update.Message.Command() {
 			case "watch":
 				FundWatch(update)
@@ -34,24 +35,15 @@ func Handle(update tgbotapi.Update) {
 				ChartsReply(update)
 			case "test":
 				Keyboard(update)
-			case "appl":
-				Yahoo(update)
 			case "kpl":
 				KPL(update)
 			case "stock":
 				StockReply(update)
-
-			// TODO
-			//case "buy":
-			//	BuyReply(update)
-			//case "sell":
-			//	SellReply(update)
-			//case "stock":
-			//	StockReply(update)
-
 			default:
-				TextReply(update, "暂时无法理解： "+update.Message.Text)
+				StockReply(update)
 			}
+		} else {
+			StockReply(update)
 		}
 	}
 }

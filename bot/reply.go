@@ -293,7 +293,21 @@ func FundUnwatch(update tgbotapi.Update) {
 
 func StockReply(update tgbotapi.Update) {
 	arguments := update.Message.CommandArguments()
+	if arguments == "" {
+		arguments = update.Message.Text
+		// remove "/" in arguments
+		arguments = strings.Replace(arguments, "/", "", -1)
+		// change arguments to upper case
+		arguments = strings.ToUpper(arguments)
+	}
+
 	symbol := data.GetSymbol(arguments)
+
+	if symbol == "" {
+		TextReply(update, "Invalid stock symbol !")
+		return
+	}
+
 	stockData := data.GetStock(symbol)
 
 	var reply [][]string
