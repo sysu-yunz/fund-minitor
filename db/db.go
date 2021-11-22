@@ -167,3 +167,22 @@ func (c *MgoC) UpdateStockList(StockList StockList) {
 
 	log.Debug("Inserted stock %+v ", insertRes)
 }
+
+// fuzzy search stock in stock list
+func (c *MgoC) FuzzySearchStock(arg string) string {
+	stock := StockInfo{}
+
+	col := c.Database("fund").Collection("stock")
+	// find one doc with name contains '万科' or symbol contains '300741'
+	res := col.FindOne(context.TODO(), bson.M{"$or": []bson.M{
+		{"name": bson.M{"$regex": arg}},
+		{"symbol": bson.M{"$regex": arg}},
+	}}).Decode(&stock)
+
+	if res != nil {
+		log.Error("Fuzzy search stock %+v", res)
+		return ""
+	}
+
+	return stock.Symbol
+}

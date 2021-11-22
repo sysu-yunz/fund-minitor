@@ -10,6 +10,17 @@ import (
 	"net/http"
 )
 
+// pass a hint to get stock symbol
+// hint can be either stock name or stock code like "万科A" or "sz002081"
+func GetSymbol(arg string) string {
+	// if arg start with "SZ" or "SH" return arg
+	if arg[0:2] == "SZ" || arg[0:2] == "SH" {
+		return arg
+	}
+
+	return global.MgoDB.FuzzySearchStock(arg)
+}
+
 func GetStock(code string) RealTimeStockData {
 	// call stock api with code
 	// return stock data

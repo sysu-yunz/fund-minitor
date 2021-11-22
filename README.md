@@ -10,16 +10,14 @@
 ### heroku
 
 
-A telegram bot that provide global stock market index and crypto
-price.
+A telegram bot that provide global stock market index and crypto price.
 
-Using webhook deployed on vercel.com and local dev with telegram
-polling mode.
+Using webhook deployed on vercel.com and local dev with telegram polling mode.
 
-## fund
+## Fund
 
 Fund data source from http://api.fund.eastmoney.com
-## stock
+## Stock
 
 Stock data source from xueqiu.com
 

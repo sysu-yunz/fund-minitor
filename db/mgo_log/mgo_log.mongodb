@@ -5,10 +5,10 @@
 use('fund');
 
 // Create a new index in the collection.
-db.getCollection('basic')
-  .createIndex(
-    {
-      fundName: 1,
+// db.getCollection('basic')
+//   .createIndex(
+//     {
+//       fundName: 1,
       /*
        * Keys
        *
@@ -30,7 +30,7 @@ db.getCollection('basic')
        * Hashed Index
        * fieldA: 'hashed'
        */
-    }, {
+    // }, {
       /*
        * Options (https://docs.mongodb.com/manual/reference/method/db.collection.createIndex/#options-for-all-index-types)
        *
@@ -42,14 +42,14 @@ db.getCollection('basic')
        * expireAfterSeconds: TTL,
        * collation: {}
        */
-    }
-  );
+  //   }
+  // );
 
   // Create a new index in the collection.
-db.getCollection('stock')
-  .createIndex(
-    {
-      name: 1,
+// db.getCollection('stock')
+//   .createIndex(
+//     {
+//       name: 1,
       /*
        * Keys
        *
@@ -71,7 +71,7 @@ db.getCollection('stock')
        * Hashed Index
        * fieldA: 'hashed'
        */
-    }, {
+    // }, {
       /*
        * Options (https://docs.mongodb.com/manual/reference/method/db.collection.createIndex/#options-for-all-index-types)
        *
@@ -83,11 +83,19 @@ db.getCollection('stock')
        * expireAfterSeconds: TTL,
        * collation: {}
        */
-    }
-  );
+  //   }
+  // );
 
 // count the number of documents in the collection
-db.getCollection('stock').count();
+// db.getCollection('stock').count();
 
 // find doc with symbol SZ300741
 // db.getCollection('stock').findOne({symbol: 'SH603096'});
+
+// find one doc with name contain '万科'
+// db.getCollection('stock').findOne({name: /茅台/});
+
+// find one doc with name contains '万科' or symbol contains '300741'
+// db.getCollection('stock').findOne({$or: [{name: /茅台/}, {symbol: /300741/}]});
+
+db.getCollection("stock").findOne

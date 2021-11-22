@@ -293,20 +293,21 @@ func FundUnwatch(update tgbotapi.Update) {
 
 func StockReply(update tgbotapi.Update) {
 	arguments := update.Message.CommandArguments()
-	stockData := data.GetStock(arguments)
+	symbol := data.GetSymbol(arguments)
+	stockData := data.GetStock(symbol)
 
 	var reply [][]string
 
 	q := stockData.Data.Quote
 
-	stockReplyString := fmt.Sprintf("%.1f, %.2f, %.1f, %v", q.Current, q.Open, q.Percent, q.Name)
+	stockReplyString := fmt.Sprintf("%.2f, %.2f, %v, %v", q.Current, q.Percent, q.Symbol, q.Name)
 	reply = append(reply, strings.Split(stockReplyString, ", "))
 
 	tableString := &strings.Builder{}
 	table := tb.NewWriter(tableString)
 	table.SetColumnSeparator(" ")
 	table.SetCenterSeparator("+")
-	table.SetHeader([]string{"Price", "Open", "%", "NAME"})
+	table.SetHeader([]string{"Price", "%", "Code", "NAME"})
 
 	for _, v := range reply {
 		table.Append(v)
