@@ -17,6 +17,9 @@ type Holdings struct {
 	ChatID  int64   `json:"chatID" bson:"chatID"`
 	Shares  []Share `json:"Shares"`
 	Bitcoin float64 `json:"bitcoin"`
+
+	Cryptos []CryptoHolding `json:"cryptos"`
+	Stocks  []StockHolding  `json:"stocks"`
 }
 
 type Share struct {
@@ -26,6 +29,21 @@ type Share struct {
 	Cost         float64 `json:"Cost"`
 }
 
+type CryptoHolding struct {
+	ID     string  `json:"id"`
+	Symbol string  `json:"symbol"`
+	Name   string  `json:"name"`
+	Cost   float64 `json:"cost"`
+	Amount float64 `json:"shares"`
+}
+
+type StockHolding struct {
+	ID     string  `json:"id"`
+	Symbol string  `json:"symbol"`
+	Name   string  `json:"name"`
+	Cost   float64 `json:"cost"`
+	Amount float64 `json:"shares"`
+}
 type StockInfo struct {
 	Symbol             string      `json:"symbol"`
 	NetProfitCagr      float64     `json:"net_profit_cagr"`

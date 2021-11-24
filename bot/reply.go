@@ -14,7 +14,6 @@ import (
 	"github.com/go-echarts/go-echarts/v2/opts"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/mmcdole/gofeed"
-	tb "github.com/olekukonko/tablewriter"
 	"github.com/spf13/cast"
 )
 
@@ -50,6 +49,7 @@ func GlobalIndexReply(update tgbotapi.Update) {
 	}
 
 	var reply [][]string
+	reply = append(reply, []string{"%", "PRICE", "/", "NAME"})
 	ch := make(chan data.Meta, len(indices))
 
 	for _, f := range indices {
@@ -74,7 +74,7 @@ func GlobalIndexReply(update tgbotapi.Update) {
 		reply = append(reply, []string{rate, price, change, name})
 	}
 
-	sort.Slice(reply, func(i, j int) bool {
+	sort.Slice(reply[1:], func(i, j int) bool {
 		iF, _ := strconv.ParseFloat(reply[i][0], 64)
 		jF, _ := strconv.ParseFloat(reply[j][0], 64)
 
@@ -97,20 +97,7 @@ func GlobalIndexReply(update tgbotapi.Update) {
 
 	reply = append(reply, strings.Split(btcRow, ", "))
 
-	tableString := &strings.Builder{}
-	table := tb.NewWriter(tableString)
-	table.SetColumnSeparator(" ")
-	table.SetCenterSeparator("+")
-	table.SetHeader([]string{"%", "PRICE", "/", "NAME"})
-
-	for _, v := range reply {
-		table.Append(v)
-	}
-
-	table.Render()
-
-	TextReply(update, "<pre>"+tableString.String()+"</pre>")
-	//return "```"+tableString.String()+"```"
+	TableReply(update, " ", "+", reply)
 }
 
 func ChartsReply(update tgbotapi.Update) {
@@ -147,6 +134,7 @@ func RealTimeFundReply(update tgbotapi.Update) {
 	watchFunds := global.MgoDB.GetWatchList(chatID)
 
 	var reply [][]string
+	reply = append(reply, []string{"CODE", "RATE", "NAME"})
 
 	ch := make(chan data.RealTimeRaw, len(watchFunds))
 
@@ -159,40 +147,28 @@ func RealTimeFundReply(update tgbotapi.Update) {
 		reply = append(reply, []string{raw.Fundcode, raw.Gszzl, raw.Name})
 	}
 
-	sort.Slice(reply, func(i, j int) bool {
+	sort.Slice(reply[1:], func(i, j int) bool {
 		iF, _ := strconv.ParseFloat(reply[i][1], 64)
 		jF, _ := strconv.ParseFloat(reply[j][1], 64)
 		return iF > jF
 	})
 
-	tableString := &strings.Builder{}
-	table := tb.NewWriter(tableString)
-	table.SetColumnSeparator(" ")
-	table.SetCenterSeparator("+")
-	table.SetHeader([]string{"CODE", "RATE", "NAME"})
-
-	for _, v := range reply {
-		table.Append(v)
-	}
-
-	table.Render()
-
-	TextReply(update, "<pre>"+tableString.String()+"</pre>")
-	//return "```"+tableString.String()+"```"
+	TableReply(update, " ", "+", reply)
 }
 
 func HoldReply(update tgbotapi.Update) {
 	chatID := update.Message.Chat.ID
-	holdFunds := global.MgoDB.GetHolding(chatID)
-
+	holds := global.MgoDB.GetHolding(chatID)
+	shares := holds.Shares
 	var hr []data.HoldReply
-	ch := make(chan data.RealTimeRaw, len(holdFunds.Shares))
 
-	for _, f := range holdFunds.Shares {
+	ch := make(chan data.RealTimeRaw, len(shares))
+
+	for _, f := range shares {
 		go data.GetRealTime(f.Code, ch)
 	}
 
-	for range holdFunds.Shares {
+	for range shares {
 		raw := <-ch
 		estimateValue := cast.ToFloat64(raw.Gsz)
 		estimateRate := cast.ToFloat64(raw.Gszzl)
@@ -208,8 +184,10 @@ func HoldReply(update tgbotapi.Update) {
 
 	var reply [][]string
 
+	reply = append(reply, []string{"EARN", "%", "COST", "NAME"})
+
 	for _, h := range hr {
-		for _, f := range holdFunds.Shares {
+		for _, f := range shares {
 			if h.Code == f.Code {
 				h.Cost = f.Cost
 				h.Shares = f.Shares
@@ -229,7 +207,7 @@ func HoldReply(update tgbotapi.Update) {
 		})
 	}
 
-	sort.Slice(reply, func(i, j int) bool {
+	sort.Slice(reply[1:], func(i, j int) bool {
 		iF, _ := strconv.ParseFloat(reply[i][0], 64)
 		jF, _ := strconv.ParseFloat(reply[j][0], 64)
 		return iF > jF
@@ -242,23 +220,10 @@ func HoldReply(update tgbotapi.Update) {
 	btc := data.GetBitcoin().CoinData[0]
 	q := btc.Quote.USD.Price * 6.5
 	bc := 3438.0
-	btcRow := fmt.Sprintf("%.1f, %.2f, %.1f, 比特币", q*holdFunds.Bitcoin-bc, (q*holdFunds.Bitcoin-bc)/bc*100, bc)
+	btcRow := fmt.Sprintf("%.1f, %.2f, %.1f, 比特币", q*holds.Bitcoin-bc, (q*holds.Bitcoin-bc)/bc*100, bc)
 	reply = append(reply, strings.Split(btcRow, ", "))
 
-	tableString := &strings.Builder{}
-	table := tb.NewWriter(tableString)
-	table.SetColumnSeparator(" ")
-	table.SetCenterSeparator("+")
-	table.SetHeader([]string{"EARN", "%", "COST", "NAME"})
-
-	for _, v := range reply {
-		table.Append(v)
-	}
-
-	table.Render()
-
-	TextReply(update, "<pre>"+tableString.String()+"</pre>")
-	//return "```"+tableString.String()+"```"
+	TableReply(update, " ", "+", reply)
 }
 
 func FundWatch(update tgbotapi.Update) {
@@ -311,25 +276,14 @@ func StockReply(update tgbotapi.Update) {
 	stockData := data.GetStock(symbol)
 
 	var reply [][]string
+	reply = append(reply, []string{"Price", "%", "Code", "NAME"})
 
 	q := stockData.Data.Quote
 
 	stockReplyString := fmt.Sprintf("%.2f, %.2f, %v, %v", q.Current, q.Percent, q.Symbol, q.Name)
 	reply = append(reply, strings.Split(stockReplyString, ", "))
 
-	tableString := &strings.Builder{}
-	table := tb.NewWriter(tableString)
-	table.SetColumnSeparator(" ")
-	table.SetCenterSeparator("+")
-	table.SetHeader([]string{"Price", "%", "Code", "NAME"})
-
-	for _, v := range reply {
-		table.Append(v)
-	}
-
-	table.Render()
-
-	TextReply(update, "<pre>"+tableString.String()+"</pre>")
+	TableReply(update, " ", "+", reply)
 }
 
 func KPL(update tgbotapi.Update) {

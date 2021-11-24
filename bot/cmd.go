@@ -1,12 +1,12 @@
 package bot
 
 import (
-	"fmt"
 	"fund/global"
 	"fund/log"
+	"strings"
 
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
-	"github.com/piquette/finance-go/quote"
+	tb "github.com/olekukonko/tablewriter"
 )
 
 func Handle(update tgbotapi.Update) {
@@ -64,16 +64,20 @@ func TextReply(update tgbotapi.Update, s string) {
 	log.Debug("Replied update %+v with %+v", update.UpdateID, m)
 }
 
-func Yahoo(update tgbotapi.Update) {
-	q, err := quote.Get("AAPL")
-	if err != nil {
-		// Uh-oh.
-		panic(err)
+func TableReply(update tgbotapi.Update, colSep string, cenSep string, reply [][]string) {
+	tableString := &strings.Builder{}
+	table := tb.NewWriter(tableString)
+	table.SetColumnSeparator(colSep)
+	table.SetCenterSeparator(cenSep)
+	table.SetHeader(reply[0])
+
+	for _, v := range reply[1:] {
+		table.Append(v)
 	}
 
-	// Success!
-	fmt.Println(q)
-	TextReply(update, fmt.Sprintf("%f", q.Ask))
+	table.Render()
+	TextReply(update, "<pre>"+tableString.String()+"</pre>")
+	//return "```"+tableString.String()+"```"
 }
 
 func Keyboard(update tgbotapi.Update) {
