@@ -24,7 +24,7 @@ func GetCoinQuote(id string) db.CoinQuoteRaw {
 
 	res, err := client.Do(req)
 	if err != nil {
-		log.Error("Get bitcoin error", err)
+		log.Error("Get crypto error", err)
 	}
 	defer res.Body.Close()
 	body, err := ioutil.ReadAll(res.Body)
@@ -32,24 +32,13 @@ func GetCoinQuote(id string) db.CoinQuoteRaw {
 		log.Error("Read bitcoin error", err)
 	}
 
-	log.Info("****************************************")
 	quote := db.CoinQuoteRaw{}
 	err = json.Unmarshal(body, &quote)
 	if err != nil {
 		log.Error("JSON unmarshal error: ", err)
 	}
 
-	// err = json.Unmarshal(body, &quote.QData)
-	// if err != nil {
-	// 	log.Error("JSON unmarshal error: ", err)
-	// }
-
-	// delete(quote.QData, "status")
-
-	log.Info("**************************************** %+v", quote.QData["1"])
-
 	return quote
-
 }
 
 func GetCoinList() {
