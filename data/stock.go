@@ -101,7 +101,7 @@ func GetStockList() {
 			log.Error("unmarshal error %v", err)
 		}
 
-		global.MgoDB.UpdateStockList(stocks)
+		global.MgoDB.InsertStockList(stocks)
 
 		log.Info("********************** %v *************** %v", stocks.Data.Count, page*size)
 

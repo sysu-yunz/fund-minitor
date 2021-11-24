@@ -141,6 +141,32 @@ func (c *MgoC) InsertHold(hold Holdings) {
 	log.Debug("Inserted hold %+v ", res)
 }
 
+// delete all data in collection cryptos
+func (c *MgoC) DeleteCryptoList() {
+	col := c.Database("fund").Collection("crypto")
+	res, err := col.DeleteMany(context.TODO(), bson.M{})
+	if err != nil {
+		log.Error("Deleting cryptos %+v", err)
+	}
+	log.Debug("Deleted cryptos %+v", res)
+}
+
+// insert a list of cryptos
+func (c *MgoC) InsertCryptoList(cryptos []CoinData) {
+	col := c.Database("fund").Collection("crypto")
+	// avoid type error in col.InsertMany
+	iCryptoList := make([]interface{}, len(cryptos))
+	for i, v := range cryptos {
+		iCryptoList[i] = v
+	}
+
+	res, err := col.InsertMany(context.TODO(), iCryptoList)
+	if err != nil {
+		log.Error("Inserting cryptos %+v ", err)
+	}
+	log.Debug("Inserted cryptos %+v ", res)
+}
+
 func (c *MgoC) DeleteStockList() {
 	col := c.Database("fund").Collection("stock_us")
 	deleteRes, err := col.DeleteMany(context.TODO(), bson.M{})
@@ -151,7 +177,7 @@ func (c *MgoC) DeleteStockList() {
 	log.Debug("Deleted stock %+v ", deleteRes)
 }
 
-func (c *MgoC) UpdateStockList(StockList StockList) {
+func (c *MgoC) InsertStockList(StockList StockList) {
 
 	col := c.Database("fund").Collection("stock_us")
 	// avoid type error in col.InsertMany

@@ -3,6 +3,7 @@ package bot
 import (
 	"fmt"
 	"fund/data"
+	"fund/db"
 	"fund/global"
 	"fund/util"
 	"os"
@@ -90,7 +91,7 @@ func GlobalIndexReply(update tgbotapi.Update) {
 	percent := fmt.Sprintf("%.2f", (rate10-rate10last)*100)
 	reply = append(reply, []string{ror, bond10Str, percent, "国债10"})
 
-	btc := data.GetBitcoin().CoinData[0]
+	btc := data.GetCoinQuote("1").QData["1"]
 	q := btc.Quote.USD
 	btcRow := fmt.Sprintf("%.2f, %.1f, %.1f, 比特币", q.PercentChange24H, q.Price, q.Price-q.Price/(1+q.PercentChange24H/100))
 
@@ -161,7 +162,18 @@ func RealTimeFundReply(update tgbotapi.Update) {
 func HoldReply(update tgbotapi.Update) {
 	chatID := update.Message.Chat.ID
 	holds := global.MgoDB.GetHolding(chatID)
-	shares := holds.Shares
+
+	var reply [][]string
+	reply = append(reply, []string{"EARN", "%", "COST", "NAME"})
+
+	reply = append(reply, FundsHoldReply(holds.Shares)...)
+	reply = append(reply, StocksHoldReply(holds.Stocks)...)
+	reply = append(reply, CryptosHoldReply(holds.Cryptos)...)
+
+	TableReply(update, " ", "+", reply)
+}
+
+func FundsHoldReply(shares []db.Share) [][]string {
 	var hr []data.HoldReply
 
 	ch := make(chan data.RealTimeRaw, len(shares))
@@ -213,19 +225,30 @@ func HoldReply(update tgbotapi.Update) {
 		return iF > jF
 	})
 
-	vk := data.GetStock("SZ000002").Data.Quote
-	vkRow := fmt.Sprintf("%.1f, %.2f, %.1f, 万科", (vk.Current-22.372)*500, (vk.Current*500-11186.0)/11186.0*100, 11186.0)
-	reply = append(reply, strings.Split(vkRow, ", "))
+	return reply
+}
 
-	btc := data.GetBitcoin().CoinData[0]
-	q := btc.Quote.USD.Price * 6.5
-	bc := 3438.0
-	btcRow := fmt.Sprintf("%.1f, %.2f, %.1f, 比特币", q*holds.Bitcoin-bc, (q*holds.Bitcoin-bc)/bc*100, bc)
-	reply = append(reply, strings.Split(btcRow, ", "))
+func CryptosHoldReply(cryptos []db.CryptoHolding) [][]string {
+	var reply [][]string
+	for _, c := range cryptos {
+		q := data.GetCoinQuote(c.ID).QData[c.ID].Quote
+		// btcRow := fmt.Sprintf("%.1f, %.2f, %.1f, 比特币", q*holds.Bitcoin-bc, (q*holds.Bitcoin-bc)/bc*100, bc)
+		row := fmt.Sprintf("%.1f, %.2f, %.1f, %s", q.USD.Price*c.Amount*6.4-c.Cost, (q.USD.Price*c.Amount*6.4-c.Cost)/c.Cost*100, c.Cost, c.Name)
+		reply = append(reply, strings.Split(row, ", "))
+	}
 
-	// prepend header
-	reply = append([][]string{{"EARN", "%", "COST", "NAME"}}, reply...)
-	TableReply(update, " ", "+", reply)
+	return reply
+}
+
+func StocksHoldReply(stocks []db.StockHolding) [][]string {
+	var reply [][]string
+	for _, s := range stocks {
+		q := data.GetStock(s.Symbol).Data.Quote
+		row := fmt.Sprintf("%.1f, %.2f, %.1f, %s", q.Current*s.Amount-s.Cost, (q.Current*s.Amount-s.Cost)/s.Cost*100, s.Cost, s.Name)
+		reply = append(reply, strings.Split(row, ", "))
+	}
+
+	return reply
 }
 
 func FundWatch(update tgbotapi.Update) {

@@ -98,4 +98,17 @@ use('fund');
 // find one doc with name contains '万科' or symbol contains '300741'
 // db.getCollection('stock').findOne({$or: [{name: /茅台/}, {symbol: /300741/}]});
 
-db.getCollection("stock").findOne
+// db.getCollection("stock").findOne
+
+// add index in collection crypto with field id   "name": "Bitcoin","symbol": "BTC", "slug": "bitcoin", cmcrank
+db.getCollection('crypto').createIndex({id: 1});
+db.getCollection('crypto').createIndex({name: 1});
+db.getCollection('crypto').createIndex({symbol: 1});
+db.getCollection('crypto').createIndex({slug: 1});
+db.getCollection('crypto').createIndex({cmcrank: 1});
+
+
+
+
+
+
