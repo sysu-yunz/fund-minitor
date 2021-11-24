@@ -49,7 +49,6 @@ func GlobalIndexReply(update tgbotapi.Update) {
 	}
 
 	var reply [][]string
-	reply = append(reply, []string{"%", "PRICE", "/", "NAME"})
 	ch := make(chan data.Meta, len(indices))
 
 	for _, f := range indices {
@@ -74,7 +73,7 @@ func GlobalIndexReply(update tgbotapi.Update) {
 		reply = append(reply, []string{rate, price, change, name})
 	}
 
-	sort.Slice(reply[1:], func(i, j int) bool {
+	sort.Slice(reply, func(i, j int) bool {
 		iF, _ := strconv.ParseFloat(reply[i][0], 64)
 		jF, _ := strconv.ParseFloat(reply[j][0], 64)
 
@@ -97,6 +96,8 @@ func GlobalIndexReply(update tgbotapi.Update) {
 
 	reply = append(reply, strings.Split(btcRow, ", "))
 
+	// prepend header
+	reply = append([][]string{{"%", "PRICE", "/", "NAME"}}, reply...)
 	TableReply(update, " ", "+", reply)
 }
 
@@ -134,7 +135,6 @@ func RealTimeFundReply(update tgbotapi.Update) {
 	watchFunds := global.MgoDB.GetWatchList(chatID)
 
 	var reply [][]string
-	reply = append(reply, []string{"CODE", "RATE", "NAME"})
 
 	ch := make(chan data.RealTimeRaw, len(watchFunds))
 
@@ -147,12 +147,14 @@ func RealTimeFundReply(update tgbotapi.Update) {
 		reply = append(reply, []string{raw.Fundcode, raw.Gszzl, raw.Name})
 	}
 
-	sort.Slice(reply[1:], func(i, j int) bool {
+	sort.Slice(reply, func(i, j int) bool {
 		iF, _ := strconv.ParseFloat(reply[i][1], 64)
 		jF, _ := strconv.ParseFloat(reply[j][1], 64)
 		return iF > jF
 	})
 
+	// prepend header
+	reply = append([][]string{{"CODE", "RATE", "NAME"}}, reply...)
 	TableReply(update, " ", "+", reply)
 }
 
@@ -184,8 +186,6 @@ func HoldReply(update tgbotapi.Update) {
 
 	var reply [][]string
 
-	reply = append(reply, []string{"EARN", "%", "COST", "NAME"})
-
 	for _, h := range hr {
 		for _, f := range shares {
 			if h.Code == f.Code {
@@ -207,7 +207,7 @@ func HoldReply(update tgbotapi.Update) {
 		})
 	}
 
-	sort.Slice(reply[1:], func(i, j int) bool {
+	sort.Slice(reply, func(i, j int) bool {
 		iF, _ := strconv.ParseFloat(reply[i][0], 64)
 		jF, _ := strconv.ParseFloat(reply[j][0], 64)
 		return iF > jF
@@ -223,6 +223,8 @@ func HoldReply(update tgbotapi.Update) {
 	btcRow := fmt.Sprintf("%.1f, %.2f, %.1f, 比特币", q*holds.Bitcoin-bc, (q*holds.Bitcoin-bc)/bc*100, bc)
 	reply = append(reply, strings.Split(btcRow, ", "))
 
+	// prepend header
+	reply = append([][]string{{"EARN", "%", "COST", "NAME"}}, reply...)
 	TableReply(update, " ", "+", reply)
 }
 
