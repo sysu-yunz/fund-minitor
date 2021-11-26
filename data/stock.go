@@ -61,21 +61,16 @@ func GetStock(code string) RealTimeStockData {
 	return d
 }
 
-func GetStockList() {
+func UpdateStockList(market Market) {
 	page := 1
 	size := 200
-	// CN sh_zs
-	// HK hk
-	// US us
-	market := "US"
-	board := "us"
 	client := &http.Client{}
 
 	global.MgoDB.DeleteStockList()
 
 	// request data until all stocks are fetched
 	for {
-		url := fmt.Sprintf("https://xueqiu.com/service/v5/stock/screener/quote/list?page=%d&size=%d&order=desc&orderby=percent&order_by=percent&market=%s&type=%s", page, size, market, board)
+		url := fmt.Sprintf("https://xueqiu.com/service/v5/stock/screener/quote/list?page=%d&size=%d&order=desc&orderby=percent&order_by=percent&market=%s&type=%s", page, size, market.Country, market.Board)
 		req, err := http.NewRequest("GET", url, nil)
 		if err != nil {
 			log.Error("request init error %v", err)
@@ -111,6 +106,11 @@ func GetStockList() {
 
 		page = page + 1
 	}
+}
+
+type Market struct {
+	Country string `json:"market"`
+	Board   string `json:"board"`
 }
 
 type RealTimeStockData struct {

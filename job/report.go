@@ -2,6 +2,7 @@ package job
 
 import (
 	"fmt"
+	"fund/data"
 	"fund/log"
 	"fund/notifier"
 	"net/http"
@@ -33,10 +34,30 @@ func DailyReport(c *gin.Context) {
 	}
 	log.Info("Username: %s\n", u)
 	log.Info("Password: %s\n", p)
+	UpdateReport()
+	c.String(http.StatusOK, "ok")
+}
+
+func UpdateReport()  {
+	// save last data summary
+
+	// update the database
+	// CN sh_zs
+	// HK hk
+	// US us
+	data.UpdateStockList(data.Market{Country: "CN", Board: "sh_zs"})
+	data.UpdateStockList(data.Market{Country: "HK", Board: "hk"})
+	data.UpdateStockList(data.Market{Country: "US", Board: "us"})
+
+	data.UpdateCoinList()
+
+
+	// compare data summary and send main changes
+
 	e := &notifier.Email{
 		To:      "dukeyunz@hotmail.com",
 		Subject: "Fund notification",
 	}
-	e.Send("Hello from heroku !")
-	c.String(http.StatusOK, "ok")
+	e.Send("股票列表已更新，Crypto列表已更新")
+
 }

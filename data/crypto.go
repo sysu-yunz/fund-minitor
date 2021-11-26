@@ -41,7 +41,7 @@ func GetCoinQuote(id string) db.CoinQuoteRaw {
 	return quote
 }
 
-func GetCoinList() {
+func UpdateCoinList() {
 	start := 1
 	limit := 200
 	client := &http.Client{}

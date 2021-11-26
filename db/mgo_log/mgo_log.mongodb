@@ -101,11 +101,44 @@ use('fund');
 // db.getCollection("stock").findOne
 
 // add index in collection crypto with field id   "name": "Bitcoin","symbol": "BTC", "slug": "bitcoin", cmcrank
-db.getCollection('crypto').createIndex({id: 1});
-db.getCollection('crypto').createIndex({name: 1});
-db.getCollection('crypto').createIndex({symbol: 1});
-db.getCollection('crypto').createIndex({slug: 1});
-db.getCollection('crypto').createIndex({cmcrank: 1});
+// db.getCollection('crypto').createIndex({id: 1});
+// db.getCollection('crypto').createIndex({name: 1});
+// db.getCollection('crypto').createIndex({symbol: 1});
+// db.getCollection('crypto').createIndex({slug: 1});
+// db.getCollection('crypto').createIndex({cmcrank: 1});
+
+// get doc count in collection crypto
+// db.getCollection('crypto').count();
+
+// find crypto symbol contains 'INT'
+// db.getCollection('crypto').findOne({symbol: "INT"});
+
+// 2021-11-26 23:05:29
+
+// get doc count in collection crypto
+crypto_count = db.getCollection('crypto').count();
+
+// get doc count in collection stock
+stockcn_count = db.getCollection('stock').count();
+
+// get doc count in collection stock_hk
+stockhk_count = db.getCollection('stock_hk').count();
+
+// get doc count in collection stock_us
+stockus_count = db.getCollection('stock_us').count();
+
+// log out the count
+print("crypto count: " + crypto_count);
+print("stockcn count: " + stockcn_count);
+print("stockhk count: " + stockhk_count);
+print("stockus count: " + stockus_count);
+
+// result 
+
+// crypto count: 7672
+// stockcn count: 4638
+// stockhk count: 2880
+// stockus count: 8489
 
 
 
