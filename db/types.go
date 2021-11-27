@@ -63,7 +63,7 @@ type StockInfo struct {
 	CurrentYearPercent float64     `json:"current_year_percent"`
 	FloatMarketCapital interface{} `json:"float_market_capital"`
 	NorthNetInflowTime interface{} `json:"north_net_inflow_time"`
-	MarketCapital      int64       `json:"market_capital"`
+	MarketCapital      interface{} `json:"market_capital"`
 	DividendYield      interface{} `json:"dividend_yield"`
 	LotSize            int         `json:"lot_size"`
 	RoeTtm             float64     `json:"roe_ttm"`

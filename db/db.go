@@ -92,7 +92,7 @@ func (c *MgoC) DeleteWatch(chatID int64, w string) {
 }
 
 func (c *MgoC) GetWatchList(chatID int64) []WatchDB {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 
 	col := c.Database("fund").Collection("watch")
@@ -115,7 +115,7 @@ func (c *MgoC) GetWatchList(chatID int64) []WatchDB {
 }
 
 func (c *MgoC) GetHolding(chatID int64) Holdings {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 
 	col := c.Database("fund").Collection("hold")
@@ -166,7 +166,7 @@ func (c *MgoC) InsertCryptoList(cryptos []CoinData) {
 }
 
 func (c *MgoC) DeleteStockList(market string) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 	var col_name string
 	if market == "us" || market == "hk" {
@@ -184,7 +184,7 @@ func (c *MgoC) DeleteStockList(market string) {
 }
 
 func (c *MgoC) InsertStockList(StockList StockList, market string) {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 	var col_name string
 	if market == "us" || market == "hk" {
@@ -208,7 +208,7 @@ func (c *MgoC) InsertStockList(StockList StockList, market string) {
 
 func (c *MgoC) GetCryptoCount() int64 {
 	// get doc count of crypto collection
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 	col := c.Database("fund").Collection("crypto")
 	count, err := col.CountDocuments(ctx, bson.M{})
@@ -220,7 +220,7 @@ func (c *MgoC) GetCryptoCount() int64 {
 
 func (c *MgoC) GetStockCount(market string) int64 {
 	// get doc count of stock collection
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 	var col_name string
 	if market == "us" || market == "hk" {
