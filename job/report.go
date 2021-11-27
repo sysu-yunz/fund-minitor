@@ -12,39 +12,6 @@ import (
 )
 
 // find schedulers in https://www.easycron.com/
-
-func UpdateBasicInfo(c *gin.Context) {
-	username := os.Getenv("username")
-	password := os.Getenv("password")
-	u, p, ok := c.Request.BasicAuth()
-	if !ok {
-		fmt.Println("Error parsing basic auth")
-		c.String(http.StatusUnauthorized, "Error parsing basic auth")
-		return
-	}
-	if u != username {
-		log.Info("Username provided is correct: %s\n", u)
-		c.String(http.StatusUnauthorized, "Error parsing basic auth")
-		return
-	}
-	if p != password {
-		log.Info("Password provided is correct: %s\n", u)
-		c.String(http.StatusUnauthorized, "Error parsing basic auth")
-		return
-	}
-	log.Info("Username: %s\n", u)
-	log.Info("Password: %s\n", p)
-	updateList()
-	c.String(http.StatusOK, "List update job started...")
-}
-
-func updateList() {
-	go data.UpdateStockList(data.Market{Country: "CN", Board: "sh_zs"})
-	go data.UpdateStockList(data.Market{Country: "HK", Board: "hk"})
-	go data.UpdateStockList(data.Market{Country: "US", Board: "us"})
-	go data.UpdateCoinList()
-}
-
 func DailyReport(c *gin.Context) {
 	username := os.Getenv("username")
 	password := os.Getenv("password")
@@ -82,6 +49,31 @@ func sendReport() {
 	hkCount := data.GetStockCount("hk")
 	usCount := data.GetStockCount("us")
 	// compare data summary and send main changes
+
+	chs := make(chan string, 4)
+
+	go func() {
+		data.UpdateCoinList()
+		chs <- "updated coin list"
+	}()
+
+	go func() {
+		data.UpdateStockList(data.Market{Country: "CN", Board: "sh_zs"})
+		chs <- "updated CN stock list"
+	}()
+
+	go func() {
+		data.UpdateStockList(data.Market{Country: "HK", Board: "hk"})
+		chs <- "updated HK stock list"
+	}()
+	go func() {
+		data.UpdateStockList(data.Market{Country: "US", Board: "us"})
+		chs <- "updated US stock list"
+	}()
+
+	for i := 0; i < 4; i++ {
+		log.Info(<-chs)
+	}
 
 	e := &notifier.Email{
 		To:      "dukeyunz@hotmail.com",

@@ -54,8 +54,7 @@ func main() {
 		router.Use(gin.Recovery())
 
 		router.POST("/"+global.Bot.Token, webhookHandler)
-		router.GET("/update", job.UpdateBasicInfo)
-		router.GET("/report", job.DailyReport)
+		router.GET("/update", job.DailyReport)
 
 		err := router.Run(":" + port)
 		if err != nil {
