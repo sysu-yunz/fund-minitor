@@ -140,6 +140,16 @@ print("stockus count: " + stockus_count);
 // stockhk count: 2880
 // stockus count: 8489
 
+// 2021-11-27 08:41:37
+
+// crypto count: 7740
+// stockcn count: 4638
+// stockhk count: 2880
+// stockus count: 8501
+
+
+// db.getCollection('crypto').findOne({symbol: "PEOPLE"});
+
 
 
 

@@ -2,6 +2,7 @@ package bot
 
 import (
 	"fund/global"
+	"fund/job"
 	"fund/log"
 	"strings"
 
@@ -31,14 +32,12 @@ func Handle(update tgbotapi.Update) {
 				GlobalIndexReply(update)
 			case "tv":
 				TVReply(update)
-			case "chart":
-				ChartsReply(update)
-			case "test":
-				Keyboard(update)
 			case "kpl":
 				KPL(update)
 			case "stock":
 				StockReply(update)
+			case "test":
+				job.UpdateReport()
 			default:
 				StockReply(update)
 			}

@@ -194,6 +194,36 @@ func (c *MgoC) InsertStockList(StockList StockList) {
 	log.Debug("Inserted stock %+v ", insertRes)
 }
 
+func (c *MgoC) GetCryptoCount() int64 {
+	// get doc count of crypto collection
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	col := c.Database("fund").Collection("crypto")
+	count, err := col.CountDocuments(ctx, bson.M{})
+	if err != nil {
+		log.Error("Getting crypto count %+v", err)
+	}
+	return count
+}
+
+func (c *MgoC) GetStockCount(market string) int64 {
+	// get doc count of stock collection
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	var col_name string
+	if market == "us" || market == "hk" {
+		col_name = "stock_" + market
+	} else if market == "" {
+		col_name = "stock"
+	}
+	col := c.Database("fund").Collection(col_name)
+	count, err := col.CountDocuments(ctx, bson.M{})
+	if err != nil {
+		log.Error("Getting stock count %+v", err)
+	}
+	return count
+}
+
 // fuzzy search stock in stock list
 func (c *MgoC) SearchStock(arg string, fuzzy bool) string {
 	if s := c.findStock("", arg, fuzzy); s != "" {

@@ -41,6 +41,16 @@ func GetCoinQuote(id string) db.CoinQuoteRaw {
 	return quote
 }
 
+func GetCryptoCount() int64 {
+	// return doc count in crypto collection
+	return global.MgoDB.GetCryptoCount()
+}
+
+func GetStockCount(market string) int64 {
+	// return doc count in stock collection
+	return global.MgoDB.GetStockCount(market)
+}
+
 func UpdateCoinList() {
 	start := 1
 	limit := 200

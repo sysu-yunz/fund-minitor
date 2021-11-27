@@ -10,6 +10,7 @@ require (
 	github.com/go-echarts/go-echarts/v2 v2.2.3
 	github.com/go-playground/validator/v10 v10.9.0 // indirect
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible
+	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kisielk/errcheck v1.2.0 // indirect
@@ -26,11 +27,13 @@ require (
 	github.com/stretchr/objx v0.1.1 // indirect
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
 	github.com/ugorji/go v1.2.6 // indirect
+	github.com/wcharczuk/go-chart v2.0.1+incompatible // indirect
 	github.com/xdg/scram v0.0.0-20180814205039-7eeb5667e42c // indirect
 	github.com/xdg/stringprep v0.0.0-20180714160509-73f8eece6fdc // indirect
 	github.com/yanyiwu/gojieba v1.1.2
 	go.mongodb.org/mongo-driver v1.7.4
 	golang.org/x/crypto v0.0.0-20211115234514-b4de73f9ece8 // indirect
+	golang.org/x/image v0.0.0-20211028202545-6944b10bf410 // indirect
 	golang.org/x/sys v0.0.0-20211113001501-0c823b97ae02 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect

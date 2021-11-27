@@ -6,13 +6,10 @@ import (
 	"fund/db"
 	"fund/global"
 	"fund/util"
-	"os"
 	"sort"
 	"strconv"
 	"strings"
 
-	"github.com/go-echarts/go-echarts/v2/charts"
-	"github.com/go-echarts/go-echarts/v2/opts"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"github.com/mmcdole/gofeed"
 	"github.com/spf13/cast"
@@ -100,35 +97,6 @@ func GlobalIndexReply(update tgbotapi.Update) {
 	// prepend header
 	reply = append([][]string{{"%", "PRICE", "/", "NAME"}}, reply...)
 	TableReply(update, " ", "+", reply)
-}
-
-func ChartsReply(update tgbotapi.Update) {
-	//chatID := update.Message.Chat.ID
-
-	pie := charts.NewPie()
-	pie.SetGlobalOptions(charts.WithTitleOpts(opts.Title{
-		Title: "家庭资产配置",
-	}),
-		charts.WithTooltipOpts(opts.Tooltip{
-			Show:      true,
-			Trigger:   "",
-			TriggerOn: "",
-			Formatter: "{b}-{d}%",
-		}))
-
-	pie.AddSeries("xxxxxxxx", generatePieItems())
-	p, _ := os.Create("pie.html")
-	pie.Render(p)
-}
-
-func generatePieItems() []opts.PieData {
-	items := make([]opts.PieData, 0)
-
-	items = append(items, opts.PieData{Name: "主动债券基金", Value: 10000})
-	items = append(items, opts.PieData{Name: "指数基金", Value: 10000})
-	items = append(items, opts.PieData{Name: "主动行业基金", Value: 10000})
-
-	return items
 }
 
 func RealTimeFundReply(update tgbotapi.Update) {
