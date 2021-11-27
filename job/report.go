@@ -13,6 +13,38 @@ import (
 
 // find schedulers in https://www.easycron.com/
 
+func UpdateBasicInfo(c *gin.Context) {
+	username := os.Getenv("username")
+	password := os.Getenv("password")
+	u, p, ok := c.Request.BasicAuth()
+	if !ok {
+		fmt.Println("Error parsing basic auth")
+		c.String(http.StatusUnauthorized, "Error parsing basic auth")
+		return
+	}
+	if u != username {
+		log.Info("Username provided is correct: %s\n", u)
+		c.String(http.StatusUnauthorized, "Error parsing basic auth")
+		return
+	}
+	if p != password {
+		log.Info("Password provided is correct: %s\n", u)
+		c.String(http.StatusUnauthorized, "Error parsing basic auth")
+		return
+	}
+	log.Info("Username: %s\n", u)
+	log.Info("Password: %s\n", p)
+	updateList()
+	c.String(http.StatusOK, "List update job started...")
+}
+
+func updateList() {
+	go data.UpdateStockList(data.Market{Country: "CN", Board: "sh_zs"})
+	go data.UpdateStockList(data.Market{Country: "HK", Board: "hk"})
+	go data.UpdateStockList(data.Market{Country: "US", Board: "us"})
+	go data.UpdateCoinList()
+}
+
 func DailyReport(c *gin.Context) {
 	username := os.Getenv("username")
 	password := os.Getenv("password")
@@ -34,11 +66,11 @@ func DailyReport(c *gin.Context) {
 	}
 	log.Info("Username: %s\n", u)
 	log.Info("Password: %s\n", p)
-	go UpdateReport()
-	c.String(http.StatusOK, "ok")
+	go sendReport()
+	c.String(http.StatusOK, "Sending email...")
 }
 
-func UpdateReport() {
+func sendReport() {
 	// save last data summary
 
 	// update the database
@@ -49,13 +81,6 @@ func UpdateReport() {
 	cnCount := data.GetStockCount("")
 	hkCount := data.GetStockCount("hk")
 	usCount := data.GetStockCount("us")
-
-	// data.UpdateStockList(data.Market{Country: "CN", Board: "sh_zs"})
-	// data.UpdateStockList(data.Market{Country: "HK", Board: "hk"})
-	// data.UpdateStockList(data.Market{Country: "US", Board: "us"})
-
-	// data.UpdateCoinList()
-
 	// compare data summary and send main changes
 
 	e := &notifier.Email{

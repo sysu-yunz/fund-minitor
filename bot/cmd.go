@@ -2,7 +2,6 @@ package bot
 
 import (
 	"fund/global"
-	"fund/job"
 	"fund/log"
 	"strings"
 
@@ -36,8 +35,6 @@ func Handle(update tgbotapi.Update) {
 				KPL(update)
 			case "stock":
 				StockReply(update)
-			case "test":
-				job.UpdateReport()
 			default:
 				StockReply(update)
 			}
