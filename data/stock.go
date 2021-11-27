@@ -8,6 +8,7 @@ import (
 	"fund/log"
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 // pass a hint to get stock symbol
@@ -66,7 +67,7 @@ func UpdateStockList(market Market) {
 	size := 200
 	client := &http.Client{}
 
-	global.MgoDB.DeleteStockList()
+	global.MgoDB.DeleteStockList(strings.ToLower(market.Country))
 
 	// request data until all stocks are fetched
 	for {
@@ -96,9 +97,9 @@ func UpdateStockList(market Market) {
 			log.Error("unmarshal error %v", err)
 		}
 
-		global.MgoDB.InsertStockList(stocks)
+		global.MgoDB.InsertStockList(stocks, strings.ToLower(market.Country))
 
-		log.Info("********************** %v *************** %v", stocks.Data.Count, page*size)
+		log.Info("%v*********** %v ********** %v", market.Country, stocks.Data.Count, page*size)
 
 		if page*size > stocks.Data.Count {
 			break
