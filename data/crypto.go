@@ -51,6 +51,18 @@ func GetStockCount(market string) int64 {
 	return global.MgoDB.GetStockCount(market)
 }
 
+func GetLagestCryptoID() int {
+	return global.MgoDB.GetLagestCryptoID()
+}
+
+func GetNewCryptos(oldID int) []db.CoinData {
+	return global.MgoDB.GetNewCryptos(oldID)
+}
+
+func GetNewCryptosCount(oldID int) int64 {
+	return global.MgoDB.GetNewCryptosCount(oldID)
+}
+
 func UpdateCoinList() {
 	start := 1
 	limit := 200

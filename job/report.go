@@ -3,6 +3,7 @@ package job
 import (
 	"fmt"
 	"fund/data"
+	"fund/db"
 	"fund/log"
 	"fund/notifier"
 	"net/http"
@@ -44,10 +45,13 @@ func sendReport() {
 	// CN sh_zs
 	// HK hk
 	// US us
-	cryptoCount := data.GetCryptoCount()
 	cnCount := data.GetStockCount("")
 	hkCount := data.GetStockCount("hk")
 	usCount := data.GetStockCount("us")
+
+	// find largest cmc_id in old collection
+	cryptoLargest := data.GetLagestCryptoID()
+
 	// compare data summary and send main changes
 
 	chs := make(chan string, 4)
@@ -85,11 +89,13 @@ func sendReport() {
 		NewCNStockCount int64
 		NewHKStockCount int64
 		NewUSStockCount int64
+		NewCryptos      []db.CoinData
 	}{
-		NewCryptoCount:  data.GetCryptoCount() - cryptoCount,
+		NewCryptoCount:  data.GetNewCryptosCount(cryptoLargest),
 		NewCNStockCount: data.GetStockCount("") - cnCount,
 		NewHKStockCount: data.GetStockCount("hk") - hkCount,
 		NewUSStockCount: data.GetStockCount("us") - usCount,
+		NewCryptos:      data.GetNewCryptos(cryptoLargest),
 	}
 
 	if err := e.ParseTemplate("job/template.html", templateData); err == nil {

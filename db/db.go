@@ -218,6 +218,56 @@ func (c *MgoC) GetCryptoCount() int64 {
 	return count
 }
 
+func (c *MgoC) GetLagestCryptoID() int {
+	// get lagest id of crypto collection
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+	col := c.Database("fund").Collection("crypto")
+	cur, err := col.Find(ctx, bson.M{}, options.Find().SetSort(bson.M{"id": -1}).SetLimit(1))
+	if err != nil {
+		log.Error("Getting crypto cmc id %+v", err)
+	}
+	var result CoinData
+	cur.Decode(&result)
+	return result.ID
+}
+
+func (c *MgoC) GetNewCryptos(oldID int) []CoinData {
+	// find cryptos which id larger than oldID
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+	col := c.Database("fund").Collection("crypto")
+	cur, err := col.Find(ctx, bson.M{"id": bson.M{"$gt": oldID}})
+	if err != nil {
+		log.Error("Getting new cryptos %+v", err)
+	}
+
+	var results []CoinData
+	for cur.Next(ctx) {
+		var result CoinData
+		err := cur.Decode(&result)
+		if err != nil {
+			log.Error("Decode new crypto %+v", err)
+		}
+		results = append(results, result)
+	}
+
+	return results
+}
+
+func (c *MgoC) GetNewCryptosCount(oldID int) int64 {
+	// get count of cryptos which id larger than oldID
+	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+	defer cancel()
+	col := c.Database("fund").Collection("crypto")
+	count, err := col.CountDocuments(ctx, bson.M{"id": bson.M{"$gt": oldID}})
+	if err != nil {
+		log.Error("Getting new cryptos count %+v", err)
+	}
+
+	return count
+}
+
 func (c *MgoC) GetStockCount(market string) int64 {
 	// get doc count of stock collection
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)

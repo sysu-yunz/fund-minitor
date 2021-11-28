@@ -127,7 +127,7 @@ use('fund');
 // // get doc count in collection stock_us
 // stockus_count = db.getCollection('stock_us').count();
 
-// // log out the count
+// // // log out the count
 // print("crypto count: " + crypto_count);
 // print("stockcn count: " + stockcn_count);
 // print("stockhk count: " + stockhk_count);
@@ -151,18 +151,21 @@ use('fund');
 // db.getCollection('crypto').findOne({symbol: "PEOPLE"});
 
 // delete doc with symbol PEOPLE
-db.getCollection('crypto').deleteOne({symbol: "PEOPLE"});
+// db.getCollection('crypto').deleteOne({symbol: "PEOPLE"});
 // delete doc with symbol SZ000001
-db.getCollection('stock').deleteOne({symbol: "SZ000001"});
+// db.getCollection('stock').deleteOne({symbol: "SZ000001"});
 // delete doc with symbol SH603096
-db.getCollection('stock').deleteOne({symbol: "SH603096"});
+// db.getCollection('stock').deleteOne({symbol: "SH603096"});
+// find doc with symbol SH603096
+// db.getCollection('stock').findOne({symbol: "SH603096"});
+// db.getCollection('stock').findOne({symbol: "SZ000002"});
 // delete doc with symbol 00001
-db.getCollection('stock_hk').deleteOne({symbol: "00001"});
+// db.getCollection('stock_hk').deleteOne({symbol: "00001"});
 // delete doc with symbol MSFT
-db.getCollection('stock_us').deleteOne({symbol: "MSFT"});
+// db.getCollection('stock_us').deleteOne({symbol: "MSFT"});
 
 
-
-
+// find doc with largest cmc_id in crypto cllection
+db.getCollection('crypto').find().sort({id:-1}).limit(1)
 
 
