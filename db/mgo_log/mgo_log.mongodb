@@ -166,6 +166,12 @@ use('fund');
 
 
 // find doc with largest cmc_id in crypto cllection
-db.getCollection('crypto').find().sort({id:-1}).limit(1)
+// db.getCollection('crypto').find().sort({id:-1}).limit(1)
+
+// create a new index with field id in crypto collection
+// db.getCollection('crypto').createIndex({id: -1});
+
+// delete doc with id larger than 15200 in crypto collection
+db.getCollection('crypto').deleteMany({id: {$gt: 15200}});
 
 

@@ -102,7 +102,7 @@ func UpdateCoinList() {
 
 		global.MgoDB.InsertCryptoList(coinList.Coins)
 
-		log.Info("********************** %v *************** %v", coinList.Status.TotalCount, start+limit)
+		log.Info("$$$$$$$$$ %v $$$$$$$$$ %v", coinList.Status.TotalCount, start+limit)
 
 		if start > coinList.Status.TotalCount {
 			break

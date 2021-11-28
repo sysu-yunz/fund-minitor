@@ -223,12 +223,12 @@ func (c *MgoC) GetLagestCryptoID() int {
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
 	col := c.Database("fund").Collection("crypto")
-	cur, err := col.Find(ctx, bson.M{}, options.Find().SetSort(bson.M{"id": -1}).SetLimit(1))
-	if err != nil {
-		log.Error("Getting crypto cmc id %+v", err)
-	}
 	var result CoinData
-	cur.Decode(&result)
+	err := col.FindOne(ctx, bson.M{}, options.FindOne().SetSort(bson.M{"id": -1})).Decode(&result)
+	if err != nil {
+		log.Error("Getting lagest crypto id %+v", err)
+	}
+
 	return result.ID
 }
 

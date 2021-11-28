@@ -1,6 +1,7 @@
 package bot
 
 import (
+	"fund/data"
 	"fund/global"
 	"fund/log"
 	"strings"
@@ -35,6 +36,8 @@ func Handle(update tgbotapi.Update) {
 				KPL(update)
 			case "stock":
 				StockReply(update)
+			case "test":
+				TestReply(update)
 			default:
 				StockReply(update)
 			}
@@ -42,6 +45,10 @@ func Handle(update tgbotapi.Update) {
 			StockReply(update)
 		}
 	}
+}
+
+func TestReply(update tgbotapi.Update) {
+	log.Info("***************%v", data.GetLagestCryptoID())
 }
 
 type RR interface {
