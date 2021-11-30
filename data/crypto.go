@@ -104,7 +104,7 @@ func UpdateCoinList() {
 
 		log.Info("$$$$$$$$$ %v $$$$$$$$$ %v", coinList.Status.TotalCount, start+limit)
 
-		if start > coinList.Status.TotalCount {
+		if start+limit > coinList.Status.TotalCount {
 			break
 		}
 
