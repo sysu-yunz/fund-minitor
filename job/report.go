@@ -62,7 +62,7 @@ func sendReport() {
 	}()
 
 	go func() {
-		data.UpdateStockList(data.Market{Country: "CN", Board: "sh_zs"})
+		data.UpdateStockList(data.Market{Country: "CN", Board: "sh_sz"})
 		chs <- "updated CN stock list"
 	}()
 

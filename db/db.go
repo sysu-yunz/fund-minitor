@@ -16,7 +16,7 @@ type MgoC struct {
 }
 
 func NewDB(pwd string) *MgoC {
-	uri := "mongodb+srv://chengqian" + ":" + pwd + "@cluster0-01hyt.azure.mongodb.net/fund?retryWrites=true&w=majority"
+	uri := "mongodb+srv://chengqian" + ":" + pwd + "@cluster0-01hyt.azure.mongodb.net/?retryWrites=true&w=majority"
 	//uri := "mongodb://127.0.0.1:27017"
 	ctx := context.TODO()
 	clientOptions := options.Client().ApplyURI(uri)
@@ -165,15 +165,18 @@ func (c *MgoC) InsertCryptoList(cryptos []CoinData) {
 	}
 }
 
+func stockCol(market string) string {
+	if market != "" {
+		return "stock_" + market
+	}
+
+	return "stock"
+}
+
 func (c *MgoC) DeleteStockList(market string) {
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
-	var col_name string
-	if market == "us" || market == "hk" {
-		col_name = "stock_" + market
-	} else if market == "" {
-		col_name = "stock"
-	}
+	col_name := stockCol(market)
 	col := c.Database("fund").Collection(col_name)
 	_, err := col.DeleteMany(ctx, bson.M{})
 	if err != nil {
@@ -186,12 +189,7 @@ func (c *MgoC) DeleteStockList(market string) {
 func (c *MgoC) InsertStockList(StockList StockList, market string) {
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
 	defer cancel()
-	var col_name string
-	if market == "us" || market == "hk" {
-		col_name = "stock_" + market
-	} else if market == "" {
-		col_name = "stock"
-	}
+	col_name := stockCol(market)
 	col := c.Database("fund").Collection(col_name)
 
 	// avoid type error in col.InsertMany
