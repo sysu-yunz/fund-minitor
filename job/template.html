@@ -7,7 +7,12 @@
 <body>
 <p>
     股票、Crypto 列表已经更新，更新内容如下： </br></br>
-    CoinMarketCap共新上 {{.NewCryptoCount}} 个Crypto，</br>
+    CoinMarketCap共新上 {{.NewCryptoCount}} 个Crypto，分别为：
+    <!-- every element in NewCryptos -->
+    {{range .NewCryptos}}
+    <a href="https://coinmarketcap.com/currencies/{{.Slug}}/">{{.Name}}</a>,
+    {{end}}
+    </br>
     中国股票市场新上 {{.NewCNStockCount}} 支股票，</br>
     美国股票市场新上 {{.NewUSStockCount}} 支股票，</br>
     香港股票市场新上 {{.NewHKStockCount}} 支股票。</br>

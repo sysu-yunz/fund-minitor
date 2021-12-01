@@ -34,11 +34,11 @@ func DailyReport(c *gin.Context) {
 	}
 	log.Info("Username: %s\n", u)
 	log.Info("Password: %s\n", p)
-	go sendReport()
+	go SendReport()
 	c.String(http.StatusOK, "Sending email...")
 }
 
-func sendReport() {
+func SendReport() {
 	// save last data summary
 
 	// update the database

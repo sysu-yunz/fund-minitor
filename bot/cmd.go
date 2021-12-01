@@ -1,8 +1,8 @@
 package bot
 
 import (
-	"fund/data"
 	"fund/global"
+	"fund/job"
 	"fund/log"
 	"strings"
 
@@ -48,7 +48,7 @@ func Handle(update tgbotapi.Update) {
 }
 
 func TestReply(update tgbotapi.Update) {
-	log.Info("***************%v", data.GetLagestCryptoID())
+	job.SendReport()
 }
 
 type RR interface {
