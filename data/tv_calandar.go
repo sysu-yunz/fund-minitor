@@ -14,13 +14,13 @@ import (
 
 func GetTVData(tvName string) string {
 	url := "https://www.episodate.com/tv-show/" + tvName
-	doc := reqHTML(url)
+	doc := reqTVHTML(url)
 
 	return findLatestEpisode(doc)
 }
 
 // copied from https://github.com/sysu-yunz/doubanAnalysis/blob/main/main.go
-func reqHTML(url string) *goquery.Document {
+func reqTVHTML(url string) *goquery.Document {
 	client := &http.Client{}
 
 	req, err := http.NewRequest("GET", url, nil)
