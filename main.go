@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"fund/bot"
 	"fund/config"
+	"fund/data"
 	"fund/db"
 	"fund/global"
 	"fund/job"
@@ -33,6 +34,8 @@ func init() {
 
 	mgoPwd := config.EnvVariable("MGO_PWD")
 	global.MgoDB = db.NewDB(mgoPwd)
+
+	data.UpdateCookie()
 }
 
 func main() {
