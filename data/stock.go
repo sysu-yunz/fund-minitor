@@ -10,6 +10,7 @@ import (
 	"io/ioutil"
 	logs "log"
 	"net/http"
+	"os"
 	"strings"
 	"time"
 
@@ -125,7 +126,11 @@ func UpdateCookie() {
 }
 
 func getCookie(url string, wait interface{}) {
+	chromeBin := os.Getenv("GOOGLE_CHROME_SHIM")
+	log.Info("chrome path: %+v", chromeBin)
+
 	options := []chromedp.ExecAllocatorOption{
+		chromedp.ExecPath(chromeBin),
 		chromedp.Flag("headless", true),
 		chromedp.Flag("blink-settings", "imageEnable=false"),
 		chromedp.UserAgent(`Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko)`),
