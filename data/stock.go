@@ -121,8 +121,10 @@ func UpdateStockList(market Market) {
 
 // update cookie and store it in global.Cookie
 func UpdateCookie() {
-	url := "https://xueqiu.com/S/SZ000002"
-	getCookie(url, nil)
+	// url := "https://xueqiu.com/S/SZ000002"
+	// getCookie(url, nil)
+	chromeBin := os.Getenv("GOOGLE_CHROME_SHIM")
+	log.Info("chrome path: %+v", chromeBin)
 }
 
 func getCookie(url string, wait interface{}) {
