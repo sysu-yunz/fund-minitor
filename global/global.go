@@ -7,6 +7,7 @@ import (
 )
 
 var (
-	Bot   *tgbotapi.BotAPI
-	MgoDB *db.MgoC
+	Bot    *tgbotapi.BotAPI
+	MgoDB  *db.MgoC
+	Cookie string
 )

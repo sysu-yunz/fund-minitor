@@ -1,14 +1,20 @@
 package data
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"fund/db"
 	"fund/global"
 	"fund/log"
 	"io/ioutil"
+	logs "log"
 	"net/http"
 	"strings"
+	"time"
+
+	"github.com/chromedp/cdproto/network"
+	"github.com/chromedp/chromedp"
 )
 
 // pass a hint to get stock symbol
@@ -32,7 +38,7 @@ func GetStock(code string) RealTimeStockData {
 	}
 	req.Header.Add("Accept", " */*")
 	req.Header.Add("Origin", " https://xueqiu.com")
-	req.Header.Add("Cookie", "xq_a_token=ad254175b8f79f3ce1be51812b24adb083dc9851 ; s=c0159r1h9d")
+	req.Header.Add("Cookie", global.Cookie)
 	// req.Header.Add("Accept-Encoding", " gzip, deflate, br")
 	req.Header.Add("Host", " stock.xueqiu.com")
 	req.Header.Add("User-Agent", " Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.1 Safari/605.1.15")
@@ -69,16 +75,17 @@ func UpdateStockList(market Market) {
 	client := &http.Client{}
 
 	global.MgoDB.DeleteStockList(strings.ToLower(market.Country))
+	baseURL := "https://xueqiu.com/service/v5/stock/screener/quote/list?order=desc&orderby=percent&order_by=percent&"
 
 	// request data until all stocks are fetched
 	for {
-		url := fmt.Sprintf("https://xueqiu.com/service/v5/stock/screener/quote/list?page=%d&size=%d&order=desc&orderby=percent&order_by=percent&market=%s&type=%s", page, size, market.Country, market.Board)
+		url := fmt.Sprintf(baseURL+"page=%d&size=%d&market=%s&type=%s", page, size, market.Country, market.Board)
 		req, err := http.NewRequest("GET", url, nil)
 		if err != nil {
 			log.Error("request init error %v", err)
 		}
 
-		req.Header.Add("Cookie", "acw_tc=2760829d16374557306416084eb60952ba53cd7be6edbdb9dbed52354505c6; s=c0159r1h9d; xq_a_token=ad254175b8f79f3ce1be51812b24adb083dc9851; xq_id_token=eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ1aWQiOi0xLCJpc3MiOiJ1YyIsImV4cCI6MTYzOTc2NDY2MCwiY3RtIjoxNjM3NDU1NzEwMDQwLCJjaWQiOiJkOWQwbjRBWnVwIn0.h50zlh-D8e7bAckr1HYbAn8eXyQ30p1Q4xGP1Uvu8F0FtTnEwbketJh-ioaj_RonipQyue_Eu4rQI26cOYB6dfWRcMhSmeieGgQ5723y9lcbyEqAIF5WJ25gEUgmEBXcPmRzCKW1VlFHiQe4kBM3HAhAnOHz0dt50d24ccKGP3cfE7NRjjWWdv1NBm0ch3pKJ_XtYV9epOPKA-fqUuekOfukwOQJeT-jhAKs93EY0yNhRjkfqMGbaiZqEx9D0R1t1eKIusZ6zcMqbF5TaWFzlAnUVAiaGoOxBlC-HWLZhfrBa_OFa5FTg3KoDG534rVet6JUxCoqOfoOw36jcSJPpA; xq_r_token=55944e6d0310d70bf0039e421a9a722032a84077")
+		req.Header.Add("Cookie", global.Cookie)
 
 		res, err := client.Do(req)
 		if err != nil {
@@ -109,6 +116,73 @@ func UpdateStockList(market Market) {
 
 		page = page + 1
 	}
+}
+
+// update cookie and store it in global.Cookie
+func UpdateCookie() {
+	url := "https://xueqiu.com/S/SZ000002"
+	getCookie(url, nil)
+}
+
+func getCookie(url string, wait interface{}) {
+	options := []chromedp.ExecAllocatorOption{
+		chromedp.Flag("headless", true),
+		chromedp.Flag("blink-settings", "imageEnable=false"),
+		chromedp.UserAgent(`Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko)`),
+	}
+
+	allocCtx, cancel := chromedp.NewExecAllocator(context.Background(), options...)
+	defer cancel()
+
+	chromeCtx, cancel := chromedp.NewContext(allocCtx, chromedp.WithLogf(logs.Printf))
+	defer cancel()
+
+	timeOutCtx, cancel := context.WithTimeout(chromeCtx, 240*time.Second)
+	defer cancel()
+
+	listenForNetworkEvent(chromeCtx)
+
+	logs.Printf("chrome visit page %s\n", url)
+	err := chromedp.Run(timeOutCtx,
+		chromedp.Navigate(url),
+		chromedp.Sleep(5*time.Second),
+		saveCookies(),
+	)
+
+	if err != nil {
+		log.Error("chrome error %v", err)
+	}
+}
+
+func saveCookies() chromedp.ActionFunc {
+	return func(c context.Context) error {
+		cookies, err := network.GetAllCookies().Do(c)
+		if err != nil {
+			return err
+		}
+
+		for _, cookie := range cookies {
+			global.Cookie = global.Cookie + cookie.Name + "=" + cookie.Value + ";"
+		}
+
+		log.Info(global.Cookie)
+
+		return nil
+	}
+
+}
+
+func listenForNetworkEvent(ctx context.Context) {
+	chromedp.ListenTarget(ctx, func(ev interface{}) {
+		switch ev := ev.(type) {
+
+		case *network.EventResponseReceived:
+			resp := ev.Response
+			if strings.HasPrefix(resp.URL, "https://stock.xueqiu.com/v5/stock/quote.json") {
+				log.Info("ffffffffff")
+			}
+		}
+	})
 }
 
 type Market struct {

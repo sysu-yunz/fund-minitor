@@ -56,6 +56,8 @@ func SendReport() {
 
 	chs := make(chan string, 4)
 
+	data.UpdateCookie()
+
 	go func() {
 		data.UpdateCoinList()
 		chs <- "updated coin list"

@@ -1,8 +1,8 @@
 package bot
 
 import (
+	"fund/data"
 	"fund/global"
-	"fund/job"
 	"fund/log"
 	"strings"
 
@@ -48,7 +48,7 @@ func Handle(update tgbotapi.Update) {
 }
 
 func TestReply(update tgbotapi.Update) {
-	job.SendReport()
+	data.UpdateCookie()
 }
 
 type RR interface {

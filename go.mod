@@ -4,7 +4,8 @@ go 1.16
 
 require (
 	github.com/PuerkitoBio/goquery v1.6.1 // indirect
-	github.com/chromedp/chromedp v0.7.3 // indirect
+	github.com/chromedp/cdproto v0.0.0-20211130100048-e5358edf9020 // indirect
+	github.com/chromedp/chromedp v0.7.6 // indirect
 	github.com/gin-gonic/gin v1.7.4 // indirect
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
 	github.com/go-echarts/go-echarts/v2 v2.2.3
@@ -34,7 +35,6 @@ require (
 	go.mongodb.org/mongo-driver v1.7.4
 	golang.org/x/crypto v0.0.0-20211115234514-b4de73f9ece8 // indirect
 	golang.org/x/image v0.0.0-20211028202545-6944b10bf410 // indirect
-	golang.org/x/sys v0.0.0-20211113001501-0c823b97ae02 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/alexcesaro/quotedprintable.v3 v3.0.0-20150716171945-2caba252f4dc // indirect
