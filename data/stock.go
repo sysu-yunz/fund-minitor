@@ -56,6 +56,7 @@ func GetStock(code string) RealTimeStockData {
 
 	err = json.Unmarshal(body, &d)
 	if err != nil {
+		log.Info(string(body))
 		log.Error("Read stock data error %v", err)
 	}
 
@@ -94,6 +95,7 @@ func UpdateStockList(market Market) {
 		stocks := db.StockList{}
 		err = json.Unmarshal(body, &stocks)
 		if err != nil {
+			log.Info(string(body))
 			log.Error("unmarshal error %v", err)
 		}
 
