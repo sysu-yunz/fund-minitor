@@ -43,7 +43,7 @@ func GetStock(code string) RealTimeStockData {
 	req.Header.Add("Host", " stock.xueqiu.com")
 	req.Header.Add("User-Agent", " Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.1 Safari/605.1.15")
 	req.Header.Add("Accept-Language", " zh-CN,zh-Hans;q=0.9")
-	req.Header.Add("Connection", " keep-alive")
+	// req.Header.Add("Connection", " keep-alive")
 
 	resp, err := c.Do(req)
 	if err != nil {
