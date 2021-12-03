@@ -1,21 +1,17 @@
 package data
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"fund/db"
 	"fund/global"
 	"fund/log"
 	"io/ioutil"
-	logs "log"
 	"net/http"
 	"os"
 	"strings"
-	"time"
-
-	"github.com/chromedp/cdproto/network"
-	"github.com/chromedp/chromedp"
+	// "github.com/chromedp/cdproto/network"
+	// "github.com/chromedp/chromedp"
 )
 
 // pass a hint to get stock symbol
@@ -127,70 +123,70 @@ func UpdateCookie() {
 	log.Info("chrome path: %+v", chromeBin)
 }
 
-func getCookie(url string, wait interface{}) {
-	chromeBin := os.Getenv("GOOGLE_CHROME_SHIM")
-	log.Info("chrome path: %+v", chromeBin)
+// func getCookie(url string, wait interface{}) {
+// 	chromeBin := os.Getenv("GOOGLE_CHROME_SHIM")
+// 	log.Info("chrome path: %+v", chromeBin)
 
-	options := []chromedp.ExecAllocatorOption{
-		chromedp.ExecPath(chromeBin),
-		chromedp.Flag("headless", true),
-		chromedp.Flag("blink-settings", "imageEnable=false"),
-		chromedp.UserAgent(`Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko)`),
-	}
+// 	options := []chromedp.ExecAllocatorOption{
+// 		chromedp.ExecPath(chromeBin),
+// 		chromedp.Flag("headless", true),
+// 		chromedp.Flag("blink-settings", "imageEnable=false"),
+// 		chromedp.UserAgent(`Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko)`),
+// 	}
 
-	allocCtx, cancel := chromedp.NewExecAllocator(context.Background(), options...)
-	defer cancel()
+// 	allocCtx, cancel := chromedp.NewExecAllocator(context.Background(), options...)
+// 	defer cancel()
 
-	chromeCtx, cancel := chromedp.NewContext(allocCtx, chromedp.WithLogf(logs.Printf))
-	defer cancel()
+// 	chromeCtx, cancel := chromedp.NewContext(allocCtx, chromedp.WithLogf(logs.Printf))
+// 	defer cancel()
 
-	timeOutCtx, cancel := context.WithTimeout(chromeCtx, 240*time.Second)
-	defer cancel()
+// 	timeOutCtx, cancel := context.WithTimeout(chromeCtx, 240*time.Second)
+// 	defer cancel()
 
-	listenForNetworkEvent(chromeCtx)
+// 	listenForNetworkEvent(chromeCtx)
 
-	logs.Printf("chrome visit page %s\n", url)
-	err := chromedp.Run(timeOutCtx,
-		chromedp.Navigate(url),
-		chromedp.Sleep(5*time.Second),
-		saveCookies(),
-	)
+// 	logs.Printf("chrome visit page %s\n", url)
+// 	err := chromedp.Run(timeOutCtx,
+// 		chromedp.Navigate(url),
+// 		chromedp.Sleep(5*time.Second),
+// 		saveCookies(),
+// 	)
 
-	if err != nil {
-		log.Error("chrome error %v", err)
-	}
-}
+// 	if err != nil {
+// 		log.Error("chrome error %v", err)
+// 	}
+// }
 
-func saveCookies() chromedp.ActionFunc {
-	return func(c context.Context) error {
-		cookies, err := network.GetAllCookies().Do(c)
-		if err != nil {
-			return err
-		}
+// func saveCookies() chromedp.ActionFunc {
+// 	return func(c context.Context) error {
+// 		cookies, err := network.GetAllCookies().Do(c)
+// 		if err != nil {
+// 			return err
+// 		}
 
-		for _, cookie := range cookies {
-			global.Cookie = global.Cookie + cookie.Name + "=" + cookie.Value + ";"
-		}
+// 		for _, cookie := range cookies {
+// 			global.Cookie = global.Cookie + cookie.Name + "=" + cookie.Value + ";"
+// 		}
 
-		log.Info(global.Cookie)
+// 		log.Info(global.Cookie)
 
-		return nil
-	}
+// 		return nil
+// 	}
 
-}
+// }
 
-func listenForNetworkEvent(ctx context.Context) {
-	chromedp.ListenTarget(ctx, func(ev interface{}) {
-		switch ev := ev.(type) {
+// func listenForNetworkEvent(ctx context.Context) {
+// 	chromedp.ListenTarget(ctx, func(ev interface{}) {
+// 		switch ev := ev.(type) {
 
-		case *network.EventResponseReceived:
-			resp := ev.Response
-			if strings.HasPrefix(resp.URL, "https://stock.xueqiu.com/v5/stock/quote.json") {
-				log.Info("ffffffffff")
-			}
-		}
-	})
-}
+// 		case *network.EventResponseReceived:
+// 			resp := ev.Response
+// 			if strings.HasPrefix(resp.URL, "https://stock.xueqiu.com/v5/stock/quote.json") {
+// 				log.Info("ffffffffff")
+// 			}
+// 		}
+// 	})
+// }
 
 type Market struct {
 	Country string `json:"market"`
