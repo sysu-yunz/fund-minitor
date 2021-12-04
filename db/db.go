@@ -363,6 +363,21 @@ func (c *MgoC) GetMovies() *mongo.Cursor {
 
 }
 
+func (c *MgoC) GetUnmarkedMovies() *mongo.Cursor {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	col := c.Database("douban").Collection("movie")
+
+	// find all movies which runtime is ""
+	cur, err := col.Find(ctx, bson.M{"runtime": ""})
+	if err != nil {
+		log.Error("Finding unmarked movies %+v", err)
+	}
+
+	return cur
+}
+
 func (c *MgoC) GetAllMovies() []Movie {
 
 	var ms []Movie
@@ -389,7 +404,7 @@ func (c *MgoC) GetAllMovies() []Movie {
 }
 
 func (c *MgoC) UpdateMovieRT(m Movie) {
-	filter := bson.D{{"subject", m.Subject}}
+	filter := bson.M{"subject": m.Subject}
 	update := bson.M{"$set": bson.M{"ep": m.Ep, "runtime": m.RunTime}}
 
 	col := c.Database("douban").Collection("movie")

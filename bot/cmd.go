@@ -48,7 +48,7 @@ func Handle(update tgbotapi.Update) {
 }
 
 func TestReply(update tgbotapi.Update) {
-	data.UpdateCookie()
+	data.AnalysisDouban()
 }
 
 type RR interface {

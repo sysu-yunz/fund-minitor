@@ -9,7 +9,6 @@ import (
 	ll "fund/log"
 	"io/ioutil"
 	"log"
-	"math/rand"
 	"net/http"
 	"regexp"
 	"strconv"
@@ -20,7 +19,17 @@ import (
 	"github.com/chromedp/chromedp"
 )
 
-func calTotalRT() {
+func AnalysisDouban() {
+	getMoviesRuntime()
+	calTotalRuntime()
+}
+
+func GetDoubanData() {
+	ms := getMovies()
+	global.MgoDB.InsertMoviesBasic(ms)
+}
+
+func calTotalRuntime() {
 	var total int
 	ms := global.MgoDB.GetAllMovies()
 	re := regexp.MustCompile("[0-9]+")
@@ -64,7 +73,7 @@ func getMovies() []db.Movie {
 	start := findBasicSubjectInfo(doc)
 	ms = append(ms, start...)
 
-	totalPage := findTotalNum(doc)/15 + 1
+	totalPage := totalWatchedNum(doc)/15 + 1
 	// totalPage := 1
 	// 翻页-组装URL
 	// https://movie.douban.com/people/dukeyunz/collect?start=15&sort=time&rating=all&filter=all&mode=grid
@@ -79,11 +88,11 @@ func getMovies() []db.Movie {
 	return ms
 }
 
-func getRTMovies() {
+func getMoviesRuntime() {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	cur := global.MgoDB.GetMovies()
+	cur := global.MgoDB.GetUnmarkedMovies()
 	for cur.Next(ctx) {
 		var result db.Movie
 		err := cur.Decode(&result)
@@ -108,6 +117,7 @@ func getHTML(url string, wait interface{}) *goquery.Document {
 	c, _ := chromedp.NewExecAllocator(context.Background(), options...)
 
 	chromeCtx, cancel := chromedp.NewContext(c, chromedp.WithLogf(log.Printf))
+	defer cancel()
 	_ = chromedp.Run(chromeCtx, make([]chromedp.Action, 0, 1)...)
 
 	timeOutCtx, cancel := context.WithTimeout(chromeCtx, 60*time.Second)
@@ -136,8 +146,13 @@ func getHTML(url string, wait interface{}) *goquery.Document {
 func reqHTML(url string) *goquery.Document {
 	client := &http.Client{}
 
-	var req *http.Request
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
 
+	req.Header.Add("Cookie", "Cookie: _vwo_uuid_v2=D4C3121BFB9ACDE32859544878C714266|211db7508d10331427e69decb6981eda; push_doumail_num=0; push_noty_num=0; ap_v=0,6.0; ck=uV6L; dbcl2=63031990:vwhZ9Lm0iL0; bid=-e84W_cG5-0; ll=108090")
+	req.Header.Add("User-Agent", "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/81.0.4044.138 Safari/537.36")
 	// req = config.ReqChrome(url)
 
 	//if RandBool() {
@@ -150,8 +165,16 @@ func reqHTML(url string) *goquery.Document {
 
 	ll.Info("正在请求网页: %s", url)
 	res, err := client.Do(req)
+	if err != nil {
+		ll.Error("请求网页失败: %s", err)
+		return nil
+	}
 	defer res.Body.Close()
 	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		ll.Error("读取网页失败: %s", err)
+		return nil
+	}
 	htmlContent := fmt.Sprintf("%s\n", body)
 
 	doc, err := goquery.NewDocumentFromReader(strings.NewReader(htmlContent))
@@ -162,20 +185,7 @@ func reqHTML(url string) *goquery.Document {
 	return doc
 }
 
-func RandBool() bool {
-	rand.Seed(time.Now().UnixNano())
-	return rand.Intn(2) == 1
-}
-
 func findSubjectRunTime(doc *goquery.Document) (rt string, eps string) {
-
-	//doc.Find("#info").Each(func(i int, s *goquery.Selection) {
-	//	op, _ := s.Attr("property")
-	//	con, _ := s.Attr("content")
-	//	if op == "v:runtime" {
-	//		fmt.Println(con)
-	//	}
-	//})
 	var mark int
 	doc.Find("div#info").Contents().Each(func(i int, s *goquery.Selection) {
 		if s.Text() == "片长:" {
@@ -211,7 +221,7 @@ func findSubjectRunTime(doc *goquery.Document) (rt string, eps string) {
 	return
 }
 
-func findTotalNum(doc *goquery.Document) int {
+func totalWatchedNum(doc *goquery.Document) int {
 	s := doc.Find("h1").Text()
 	re := regexp.MustCompile(`(?s)\((.*)\)`)
 	m := re.FindAllStringSubmatch(s, -1)

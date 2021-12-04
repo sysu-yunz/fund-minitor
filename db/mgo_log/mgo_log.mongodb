@@ -176,7 +176,18 @@ use('fund');
 
 // 2021-12-01 10:19:27
 // find doc with largest cmc_id in crypto cllection
-db.getCollection('crypto').find().sort({id:-1}).limit(6)
+// db.getCollection('crypto').find().sort({id:-1}).limit(6)
+
+// 2021-12-04 23:30:09
+use('douban');
+// find runtime field not equal to "" in collection douban
+db.getCollection('movie').find({runtime: {$ne: ""}}).count(); 
+// db.getCollection('movie').findOne({subject: "1292052"});
+
+// add index in collection douban with field subject
+// db.getCollection('movie').createIndex({subject: 1});
+// db.getCollection('movie').createIndex({title: 1});
+
 
 
 
