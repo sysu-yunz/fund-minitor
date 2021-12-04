@@ -369,8 +369,8 @@ func (c *MgoC) GetUnmarkedMovies() *mongo.Cursor {
 
 	col := c.Database("douban").Collection("movie")
 
-	// find all movies which runtime is ""
-	cur, err := col.Find(ctx, bson.M{"runtime": ""})
+	// find all movies which runtime and ep is ""
+	cur, err := col.Find(ctx, bson.M{"runtime": "", "ep": ""})
 	if err != nil {
 		log.Error("Finding unmarked movies %+v", err)
 	}
@@ -389,6 +389,33 @@ func (c *MgoC) GetAllMovies() []Movie {
 	cur, err := col.Find(ctx, bson.M{})
 	if err != nil {
 		log.Error("Finding watches %+v", err)
+	}
+
+	for cur.Next(ctx) {
+		var result Movie
+		err := cur.Decode(&result)
+		if err != nil {
+			log.Error("Decode watch %+v", err)
+		}
+		ms = append(ms, result)
+	}
+
+	return ms
+}
+
+func (c *MgoC) GetMoviesOfYear(year string) []Movie {
+	var ms []Movie
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	col := c.Database("douban").Collection("movie")
+	// find movies date start with year
+	cur, err := col.Find(ctx, bson.M{"date": bson.M{
+		"$regex": "^" + year,
+	}})
+	if err != nil {
+		log.Error("Finding year watches %+v", err)
 	}
 
 	for cur.Next(ctx) {

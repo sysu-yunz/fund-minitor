@@ -21,7 +21,10 @@ import (
 
 func AnalysisDouban() {
 	getMoviesRuntime()
-	calTotalRuntime()
+	for i := 0; i < 10; i++ {
+		ll.Info("%d", i+2012)
+		calTotalRuntime(strconv.Itoa(i + 2012))
+	}
 }
 
 func GetDoubanData() {
@@ -29,9 +32,9 @@ func GetDoubanData() {
 	global.MgoDB.InsertMoviesBasic(ms)
 }
 
-func calTotalRuntime() {
+func calTotalRuntime(year string) {
 	var total int
-	ms := global.MgoDB.GetAllMovies()
+	ms := global.MgoDB.GetMoviesOfYear(year)
 	re := regexp.MustCompile("[0-9]+")
 	for _, m := range ms {
 

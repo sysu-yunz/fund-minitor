@@ -180,9 +180,10 @@ use('fund');
 
 // 2021-12-04 23:30:09
 use('douban');
-// find runtime field not equal to "" in collection douban
-db.getCollection('movie').find({runtime: {$ne: ""}}).count(); 
-// db.getCollection('movie').findOne({subject: "1292052"});
+// find runtime field not equal to "" and ep field not equal to " in collection douban
+db.getCollection('movie').find({$or: [{runtime: {$ne: ""}}, {ep: {$ne: ""}}]}).count();
+// db.getCollection('movie').find({runtime: {$ne: ""}}).count(); 
+// db.getCollection('movie').findOne({subject: "20395155"});
 
 // add index in collection douban with field subject
 // db.getCollection('movie').createIndex({subject: 1});
