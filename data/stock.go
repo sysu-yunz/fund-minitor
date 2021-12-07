@@ -146,12 +146,12 @@ func getCookie(url string, wait interface{}) {
 	timeOutCtx, cancel := context.WithTimeout(chromeCtx, 240*time.Second)
 	defer cancel()
 
-	listenForNetworkEvent(chromeCtx)
+	// listenForNetworkEvent(chromeCtx)
 
 	log.Info("chrome visit page %s\n", url)
 	err := chromedp.Run(timeOutCtx,
 		chromedp.Navigate(url),
-		chromedp.Sleep(5*time.Second),
+		chromedp.Sleep(1*time.Second),
 		saveCookies(),
 	)
 
@@ -185,7 +185,7 @@ func listenForNetworkEvent(ctx context.Context) {
 		case *network.EventResponseReceived:
 			resp := ev.Response
 			if strings.HasPrefix(resp.URL, "https://stock.xueqiu.com/v5/stock/quote.json") {
-				log.Info("ffffffffff")
+				log.Info("Network reply receeived")
 			}
 		}
 	})
