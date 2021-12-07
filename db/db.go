@@ -474,3 +474,36 @@ func (c *MgoC) InsertUpdateID(update tgbotapi.Update) {
 		log.Error("Inserting update %+v", err)
 	}
 }
+
+// store cookie in mongodb
+func (c *MgoC) InsertCookie(cookie string) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	col := c.Database("bot").Collection("cookie")
+	_, err := col.InsertOne(ctx, Cookie{Date: time.Now(), CookieStr: cookie})
+	if err != nil {
+		log.Error("Inserting cookie %+v", err)
+	}
+
+	log.Info("Inserted cookie.")
+}
+
+// get cookie from mongodb
+func (c *MgoC) GetCookie() string {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	col := c.Database("bot").Collection("cookie")
+
+	var cookie Cookie
+	err := col.FindOne(ctx, bson.M{}, options.FindOne().SetSort(bson.M{"date": -1})).Decode(&cookie)
+
+	if err != nil || cookie.CookieStr == "" {
+		log.Error("Getting cookie %+v", err)
+	}
+
+	log.Info("Got cookie.")
+
+	return cookie.CookieStr
+}

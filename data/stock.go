@@ -38,7 +38,7 @@ func GetStock(code string) RealTimeStockData {
 	}
 	req.Header.Add("Accept", " */*")
 	req.Header.Add("Origin", " https://xueqiu.com")
-	req.Header.Add("Cookie", global.Cookie)
+	req.Header.Add("Cookie", global.MgoDB.GetCookie())
 	// req.Header.Add("Accept-Encoding", " gzip, deflate, br")
 	req.Header.Add("Host", " stock.xueqiu.com")
 	req.Header.Add("User-Agent", " Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.1 Safari/605.1.15")
@@ -85,7 +85,7 @@ func UpdateStockList(market Market) {
 			log.Error("request init error %v", err)
 		}
 
-		req.Header.Add("Cookie", global.Cookie)
+		req.Header.Add("Cookie", global.MgoDB.GetCookie())
 
 		res, err := client.Do(req)
 		if err != nil {
@@ -122,8 +122,6 @@ func UpdateStockList(market Market) {
 func UpdateCookie() {
 	url := "https://xueqiu.com/S/SZ000002"
 	getCookie(url, nil)
-	chromeBin := os.Getenv("GOOGLE_CHROME_SHIM")
-	log.Info("chrome path: %+v", chromeBin)
 }
 
 func getCookie(url string, wait interface{}) {
@@ -167,11 +165,13 @@ func saveCookies() chromedp.ActionFunc {
 			return err
 		}
 
+		cookiesStr := ""
+
 		for _, cookie := range cookies {
-			global.Cookie = global.Cookie + cookie.Name + "=" + cookie.Value + ";"
+			cookiesStr = cookiesStr + cookie.Name + "=" + cookie.Value + ";"
 		}
 
-		log.Info(global.Cookie)
+		global.MgoDB.InsertCookie(cookiesStr)
 
 		return nil
 	}

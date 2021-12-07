@@ -179,15 +179,24 @@ use('fund');
 // db.getCollection('crypto').find().sort({id:-1}).limit(6)
 
 // 2021-12-04 23:30:09
-use('douban');
+use('bot');
 // find runtime field not equal to "" and ep field not equal to " in collection douban
-db.getCollection('movie').find({$or: [{runtime: {$ne: ""}}, {ep: {$ne: ""}}]}).count();
+// db.getCollection('movie').find({$or: [{runtime: {$ne: ""}}, {ep: {$ne: ""}}]}).count();
 // db.getCollection('movie').find({runtime: {$ne: ""}}).count(); 
 // db.getCollection('movie').findOne({subject: "20395155"});
 
 // add index in collection douban with field subject
 // db.getCollection('movie').createIndex({subject: 1});
 // db.getCollection('movie').createIndex({title: 1});
+// db.getCollection('update').createIndex({updateid: 1});
+
+// 2021-12-07 22:34:10
+// create TTL index in database bot collection update with field updateid
+// db.getCollection('update').createIndex({updateid: 1}, {expireAfterSeconds: 3600});
+
+// remove index in collection update with field updateid
+// db.getCollection('update').dropIndex({updateid: 1});
+
 
 
 

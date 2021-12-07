@@ -1,6 +1,8 @@
 package db
 
-import "time"
+import (
+	"time"
+)
 
 type WatchDB struct {
 	ChatID int64  `json:"chatID" bson:"chatID"`
@@ -155,4 +157,9 @@ type Movie struct {
 	Img     string
 	Ep      string
 	RunTime string
+}
+
+type Cookie struct {
+	Date      time.Time `json:"date"`
+	CookieStr string    `json:"cookie"`
 }
