@@ -35,7 +35,8 @@ func init() {
 	mgoPwd := config.EnvVariable("MGO_PWD")
 	global.MgoDB = db.NewDB(mgoPwd)
 
-	data.UpdateCookie()
+	// start chrome takes a while, may cause cron job timeout
+	go data.UpdateCookie()
 }
 
 func main() {
