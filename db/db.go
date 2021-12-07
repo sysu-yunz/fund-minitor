@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/globalsign/mgo/bson"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -442,4 +443,34 @@ func (c *MgoC) UpdateMovieRT(m Movie) {
 	}
 
 	log.Info("Matched %v documents and updated %v documents.\n", updateResult.MatchedCount, updateResult.ModifiedCount)
+}
+
+// check if update id exist
+func (c *MgoC) ExistUpdateID(update tgbotapi.Update) bool {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	col := c.Database("bot").Collection("update")
+	count, err := col.CountDocuments(ctx, bson.M{"updateid": update.UpdateID})
+	if err != nil {
+		log.Error("Checking update %+v", err)
+	}
+
+	if count > 0 {
+		return true
+	}
+
+	return false
+}
+
+// insert update id
+func (c *MgoC) InsertUpdateID(update tgbotapi.Update) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	col := c.Database("bot").Collection("update")
+	_, err := col.InsertOne(ctx, update)
+	if err != nil {
+		log.Error("Inserting update %+v", err)
+	}
 }

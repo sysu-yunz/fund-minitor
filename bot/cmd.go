@@ -17,6 +17,17 @@ func Handle(update tgbotapi.Update) {
 	}
 
 	if update.Message != nil {
+
+		log.Info("Got update %+v", update.UpdateID)
+		// if update id exists in db, ignore it
+		if global.MgoDB.ExistUpdateID(update) {
+			log.Info("Update %+v already exists", update.UpdateID)
+			return
+		} else {
+			global.MgoDB.InsertUpdateID(update)
+			log.Info("Update %+v inserted", update.UpdateID)
+		}
+
 		if update.Message.IsCommand() {
 			log.Info("Command %s", update.Message.Text)
 			switch update.Message.Command() {
