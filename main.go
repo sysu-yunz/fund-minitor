@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"fund/bot"
 	"fund/config"
+	"fund/data"
 	"fund/db"
 	"fund/global"
 	"fund/job"
@@ -35,7 +36,7 @@ func init() {
 	global.MgoDB = db.NewDB(mgoPwd)
 
 	// start chrome takes a while, may cause cron job timeout
-	// go data.UpdateCookie()
+	go data.UpdateCookie()
 }
 
 func main() {

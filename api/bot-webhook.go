@@ -3,6 +3,7 @@ package handler
 import (
 	"encoding/json"
 	"fund/bot"
+	"fund/data"
 	"fund/db"
 	"fund/global"
 	"fund/log"
@@ -28,7 +29,7 @@ func init() {
 
 	mgoPwd := os.Getenv("MGO_PWD")
 	global.MgoDB = db.NewDB(mgoPwd)
-	// go data.UpdateCookie()
+	go data.UpdateCookie()
 }
 
 func Handler(w http.ResponseWriter, req *http.Request) {
