@@ -70,12 +70,10 @@ func TextReply(update tgbotapi.Update, s string) {
 	msg := tgbotapi.NewMessage(update.Message.Chat.ID, s)
 	msg.ReplyToMessageID = update.Message.MessageID
 	msg.ParseMode = tgbotapi.ModeHTML
-	m, err := global.Bot.Send(msg)
+	_, err := global.Bot.Send(msg)
 	if err != nil {
 		log.Error("Text reply %+v ", err)
 	}
-
-	log.Debug("Replied update %+v with %+v", update.UpdateID, m)
 }
 
 func TableReply(update tgbotapi.Update, colSep string, cenSep string, reply [][]string) {
