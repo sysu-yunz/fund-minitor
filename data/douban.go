@@ -287,3 +287,5 @@ func findBasicSubjectInfo(doc *goquery.Document) []db.Movie {
 
 	return ms
 }
+
+// todo: save analysis result to db
