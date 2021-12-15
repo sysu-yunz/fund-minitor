@@ -12,6 +12,14 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+type Diff struct {
+	NewCryptoCount  int64
+	NewCNStockCount int64
+	NewHKStockCount int64
+	NewUSStockCount int64
+	NewCryptos      []db.CoinData
+}
+
 // find schedulers in https://www.easycron.com/
 func DailyReport(c *gin.Context) {
 	username := os.Getenv("username")
@@ -39,6 +47,23 @@ func DailyReport(c *gin.Context) {
 }
 
 func SendReport() {
+
+	e := &notifier.Email{
+		To:      "dukeyunz@hotmail.com",
+		Subject: "bot daily report",
+	}
+
+	diff := UpdateBasicInfo()
+
+	if err := e.ParseTemplate("job/template.html", diff); err == nil {
+		// e.Send()
+		log.Info("Updated basic info successfully %+v", diff)
+	} else {
+		log.Error("Parse template failed: %s\n", err.Error())
+	}
+}
+
+func UpdateBasicInfo() Diff {
 	// save last data summary
 
 	// update the database
@@ -81,18 +106,7 @@ func SendReport() {
 		log.Info(<-chs)
 	}
 
-	e := &notifier.Email{
-		To:      "dukeyunz@hotmail.com",
-		Subject: "bot daily report",
-	}
-
-	templateData := struct {
-		NewCryptoCount  int64
-		NewCNStockCount int64
-		NewHKStockCount int64
-		NewUSStockCount int64
-		NewCryptos      []db.CoinData
-	}{
+	templateData := Diff{
 		NewCryptoCount:  data.GetNewCryptosCount(cryptoLargest),
 		NewCNStockCount: data.GetStockCount("") - cnCount,
 		NewHKStockCount: data.GetStockCount("hk") - hkCount,
@@ -100,11 +114,7 @@ func SendReport() {
 		NewCryptos:      data.GetNewCryptos(cryptoLargest),
 	}
 
-	if err := e.ParseTemplate("job/template.html", templateData); err == nil {
-		e.Send()
-	} else {
-		log.Error("Parse template failed: %s\n", err.Error())
-	}
+	return templateData
 }
 
 // func reportChart() {
