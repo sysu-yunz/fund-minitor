@@ -31,29 +31,39 @@ func Handle(update tgbotapi.Update) {
 		if update.Message.IsCommand() {
 			log.Info("Command %s", update.Message.Text)
 			switch update.Message.Command() {
-			case "watch":
-				FundWatch(update)
-			case "unwatch":
-				FundUnwatch(update)
-			case "fund":
-				RealTimeFundReply(update)
-			case "hold":
-				HoldReply(update)
-			case "index":
-				GlobalIndexReply(update)
+
+			case "portfolio":
+				Portfolio(update)
+			// case "buy":
+			// 	Buy(update)
+			// case "sell":
+			// 	Sell(update)
+
+			case "subscription":
+				Subscription(update)
+			case "sub":
+				Sub(update)
+			case "unsub":
+				Unsub(update)
+
+			case "indices":
+				Indices(update)
+
+			case "quote":
+				Quote(update)
+
 			case "tv":
 				TVReply(update)
 			case "kpl":
 				KPL(update)
-			case "stock":
-				StockReply(update)
+
 			case "test":
 				TestReply(update)
 			default:
-				StockReply(update)
+				Quote(update)
 			}
 		} else {
-			StockReply(update)
+			Quote(update)
 		}
 	}
 }

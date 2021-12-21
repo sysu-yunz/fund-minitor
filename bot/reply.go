@@ -34,7 +34,7 @@ func TVReply(update tgbotapi.Update) {
 	TextReply(update, res)
 }
 
-func GlobalIndexReply(update tgbotapi.Update) {
+func Indices(update tgbotapi.Update) {
 	type index struct {
 		Symbol string
 		Name   string
@@ -103,7 +103,7 @@ func GlobalIndexReply(update tgbotapi.Update) {
 	TableReply(update, " ", "+", reply)
 }
 
-func RealTimeFundReply(update tgbotapi.Update) {
+func Subscription(update tgbotapi.Update) {
 	chatID := update.Message.Chat.ID
 	watchFunds := global.MgoDB.GetWatchList(chatID)
 
@@ -131,7 +131,7 @@ func RealTimeFundReply(update tgbotapi.Update) {
 	TableReply(update, " ", "+", reply)
 }
 
-func HoldReply(update tgbotapi.Update) {
+func Portfolio(update tgbotapi.Update) {
 	chatID := update.Message.Chat.ID
 	holds := global.MgoDB.GetHolding(chatID)
 
@@ -223,7 +223,7 @@ func StocksHoldReply(stocks []db.StockHolding) [][]string {
 	return reply
 }
 
-func FundWatch(update tgbotapi.Update) {
+func Sub(update tgbotapi.Update) {
 	chatID := update.Message.Chat.ID
 	arguments := update.Message.CommandArguments()
 	if f, ok := global.MgoDB.ValidFundCode(arguments); ok {
@@ -238,7 +238,7 @@ func FundWatch(update tgbotapi.Update) {
 	}
 }
 
-func FundUnwatch(update tgbotapi.Update) {
+func Unsub(update tgbotapi.Update) {
 	chatID := update.Message.Chat.ID
 	arguments := update.Message.CommandArguments()
 	if f, ok := global.MgoDB.ValidFundCode(arguments); ok {
@@ -253,7 +253,7 @@ func FundUnwatch(update tgbotapi.Update) {
 	}
 }
 
-func StockReply(update tgbotapi.Update) {
+func Quote(update tgbotapi.Update) {
 	arguments := update.Message.CommandArguments()
 	if arguments == "" {
 		arguments = update.Message.Text
