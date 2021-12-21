@@ -14,10 +14,34 @@ A telegram bot that provide global stock market index and crypto price.
 
 Using webhook deployed on vercel.com and local dev with telegram polling mode.
 
-## Fund
+## Subscribe
+
+Users can subscribe quotes they like. Send command /quotes, bot will reply all of your subscribed quotes.
+
+## Check
+
+Send quote name to check the latest price. Bot will find your favorite by your history.
+
+## Buy
+
+Buy command with price and amount, bot will build a portfolio for you, you can change it by buy/sell command.
+
+## Data
+
+### Fund
 
 Fund data source from http://api.fund.eastmoney.com
-## Stock
+
+### Crypto
+
+
+### Commodities
+
+### Crypto
+
+### Indices
+
+### Stocks
 
 Stock data source from xueqiu.com
 
@@ -25,7 +49,7 @@ Stock list in https://xueqiu.com/hq#exchange=US&firstName=3&secondName=3_0
 
 Stock detail in https://xueqiu.com/S/SZ000002
 
-## statement
+## Statement
 
 Data only used for research purpose.
 

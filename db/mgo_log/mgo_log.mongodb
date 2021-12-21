@@ -179,7 +179,7 @@ use('fund');
 // db.getCollection('crypto').find().sort({id:-1}).limit(6)
 
 // 2021-12-04 23:30:09
-use('bot');
+// use('bot');
 // find runtime field not equal to "" and ep field not equal to " in collection douban
 // db.getCollection('movie').find({$or: [{runtime: {$ne: ""}}, {ep: {$ne: ""}}]}).count();
 // db.getCollection('movie').find({runtime: {$ne: ""}}).count(); 
@@ -196,6 +196,11 @@ use('bot');
 
 // remove index in collection update with field updateid
 // db.getCollection('update').dropIndex({updateid: 1});
+
+// 2021-12-21 13:53:26
+
+db.getCollection('crypto').findOne({symbol: "UNI"});
+
 
 
 
