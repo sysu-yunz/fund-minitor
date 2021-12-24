@@ -1,7 +1,7 @@
-index - 获取指数信息
-fund - 获取基金信息
-hold - 持仓信息
+subscription - 获取订阅信息
+portfolio - 持仓信息
+indices - 获取指数信息
+sub - 加入订阅
+unsub - 移除订阅
 tv - 获取美剧更新时间
-watch - 加入观察列表
-unwatch - 取消观察
 kpl - 获取KPL首发名单
