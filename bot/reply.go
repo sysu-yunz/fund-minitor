@@ -117,7 +117,7 @@ func Subscription(update tgbotapi.Update) {
 
 	for range watchFunds {
 		raw := <-ch
-		reply = append(reply, []string{raw.Fundcode, raw.Gszzl, raw.Name})
+		reply = append(reply, []string{raw.Fundcode, raw.Gszzl, util.ShortenFundName(raw.Name)})
 	}
 
 	sort.Slice(reply, func(i, j int) bool {
