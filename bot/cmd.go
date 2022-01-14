@@ -38,6 +38,8 @@ func Handle(update tgbotapi.Update) {
 			// 	Buy(update)
 			// case "sell":
 			// 	Sell(update)
+			// case "aftermath":
+			// 	Aftermath(update)
 
 			case "subscription":
 				Subscription(update)
