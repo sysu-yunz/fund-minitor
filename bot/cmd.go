@@ -18,7 +18,7 @@ func Handle(update tgbotapi.Update) {
 
 	if update.Message != nil {
 
-		log.Info("Got update %+v", update.UpdateID)
+		log.Info("Got update %+v message %+v", update.UpdateID, update.Message.MessageID)
 		// if update id exists in db, ignore it
 		if global.MgoDB.ExistUpdateID(update) {
 			log.Info("Update %+v already exists", update.UpdateID)
@@ -80,6 +80,7 @@ type RR interface {
 
 func TextReply(update tgbotapi.Update, s string) {
 	msg := tgbotapi.NewMessage(update.Message.Chat.ID, s)
+	log.Info("Reply to message %+v", update.Message.MessageID)
 	msg.ReplyToMessageID = update.Message.MessageID
 	msg.ParseMode = tgbotapi.ModeHTML
 	_, err := global.Bot.Send(msg)
