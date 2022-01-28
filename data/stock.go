@@ -218,7 +218,7 @@ type RealTimeStockData struct {
 			LimitDown                float64     `json:"limit_down"`
 			NoProfit                 interface{} `json:"no_profit"`
 			High                     float64     `json:"high"`
-			FloatMarketCapital       int64       `json:"float_market_capital"`
+			FloatMarketCapital       float64     `json:"float_market_capital"`
 			TimestampExt             interface{} `json:"timestamp_ext"`
 			LotSize                  int         `json:"lot_size"`
 			LockSet                  interface{} `json:"lock_set"`
