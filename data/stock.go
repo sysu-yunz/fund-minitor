@@ -214,7 +214,7 @@ type RealTimeStockData struct {
 			Delayed                  int         `json:"delayed"`
 			Type                     int         `json:"type"`
 			TickSize                 float64     `json:"tick_size"`
-			FloatShares              int64       `json:"float_shares"`
+			FloatShares              float64     `json:"float_shares"`
 			LimitDown                float64     `json:"limit_down"`
 			NoProfit                 interface{} `json:"no_profit"`
 			High                     float64     `json:"high"`
@@ -229,13 +229,13 @@ type RealTimeStockData struct {
 			ProfitFour               float64     `json:"profit_four"`
 			Volume                   int         `json:"volume"`
 			VolumeRatio              float64     `json:"volume_ratio"`
-			ProfitForecast           int64       `json:"profit_forecast"`
+			ProfitForecast           float64     `json:"profit_forecast"`
 			TurnoverRate             float64     `json:"turnover_rate"`
 			Low52W                   float64     `json:"low52w"`
 			Name                     string      `json:"name"`
 			Exchange                 string      `json:"exchange"`
 			PeForecast               float64     `json:"pe_forecast"`
-			TotalShares              int64       `json:"total_shares"`
+			TotalShares              float64     `json:"total_shares"`
 			Status                   int         `json:"status"`
 			IsVieDesc                interface{} `json:"is_vie_desc"`
 			SecurityStatus           interface{} `json:"security_status"`
@@ -248,18 +248,18 @@ type RealTimeStockData struct {
 			Current                  float64     `json:"current"`
 			IsVie                    interface{} `json:"is_vie"`
 			CurrentYearPercent       float64     `json:"current_year_percent"`
-			IssueDate                int64       `json:"issue_date"`
+			IssueDate                float64     `json:"issue_date"`
 			SubType                  string      `json:"sub_type"`
 			Low                      float64     `json:"low"`
 			IsRegistrationDesc       interface{} `json:"is_registration_desc"`
 			NoProfitDesc             interface{} `json:"no_profit_desc"`
-			MarketCapital            int64       `json:"market_capital"`
+			MarketCapital            float64     `json:"market_capital"`
 			Dividend                 float64     `json:"dividend"`
 			DividendYield            float64     `json:"dividend_yield"`
 			Currency                 string      `json:"currency"`
 			Navps                    float64     `json:"navps"`
 			Profit                   float64     `json:"profit"`
-			Timestamp                int64       `json:"timestamp"`
+			Timestamp                float64     `json:"timestamp"`
 			PeLyr                    float64     `json:"pe_lyr"`
 			Amount                   float64     `json:"amount"`
 			PledgeRatio              float64     `json:"pledge_ratio"`
@@ -268,7 +268,7 @@ type RealTimeStockData struct {
 			Pb                       float64     `json:"pb"`
 			LimitUp                  float64     `json:"limit_up"`
 			PeTtm                    float64     `json:"pe_ttm"`
-			Time                     int64       `json:"time"`
+			Time                     float64     `json:"time"`
 			Open                     float64     `json:"open"`
 		} `json:"quote"`
 		Others struct {
