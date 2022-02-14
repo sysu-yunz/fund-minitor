@@ -80,17 +80,15 @@ func Indices(update tgbotapi.Update) {
 		return iF > jF
 	})
 
-	// chinamoney.com.cn is not working, so remove bond index
+	bondRaw := data.GetChina10YearBondYield().Records
+	bond := cast.ToFloat64(bondRaw[0].TenRate)
 
-	// bondRaw := data.GetChina10YearBondYield().Records
-	// bond := cast.ToFloat64(bondRaw[0].TenRate)
-
-	// bond10Str := fmt.Sprintf("%.1f", bond*100)
-	// rate10 := cast.ToFloat64(bondRaw[0].TenRate)
-	// rate10last := cast.ToFloat64(bondRaw[1].TenRate)
-	// ror := fmt.Sprintf("%.2f", (rate10-rate10last)/rate10last*100)
-	// percent := fmt.Sprintf("%.2f", (rate10-rate10last)*100)
-	// reply = append(reply, []string{ror, bond10Str, percent, "国债10"})
+	bond10Str := fmt.Sprintf("%.1f", bond*100)
+	rate10 := cast.ToFloat64(bondRaw[0].TenRate)
+	rate10last := cast.ToFloat64(bondRaw[1].TenRate)
+	ror := fmt.Sprintf("%.2f", (rate10-rate10last)/rate10last*100)
+	percent := fmt.Sprintf("%.2f", (rate10-rate10last)*100)
+	reply = append(reply, []string{ror, bond10Str, percent, "国债10"})
 
 	btc := data.GetCoinQuote("1").QData["1"]
 	q := btc.Quote.USD
