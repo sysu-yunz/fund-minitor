@@ -199,10 +199,20 @@ use('fund');
 
 // 2021-12-21 13:53:26
 
-db.getCollection('crypto').findOne({symbol: "UNI"});
+// db.getCollection('crypto').findOne({symbol: "UNI"});
 
+// 2022-04-01 15:58:51
+// const database = 'youtube';
+// const collection = 'video';
 
+// // Create a new database.
+// use(database);
 
+// // Create a new collection.
+// db.createCollection(collection);
 
-
-
+// count the number of documents in the collection youtube.video
+use('youtube');
+// db.getCollection('video').count();
+// count the number of doc that time field start with 2022
+db.getCollection('video').find({time: {$regex: /2012/}}).count();

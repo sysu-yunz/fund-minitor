@@ -1,6 +1,7 @@
 package bot
 
 import (
+	"fmt"
 	"fund/data"
 	"fund/global"
 	"fund/log"
@@ -58,7 +59,8 @@ func Handle(update tgbotapi.Update) {
 				TVReply(update)
 			case "kpl":
 				KPL(update)
-
+			case "yt":
+				data.BasicVideoInfo()
 			case "test":
 				TestReply(update)
 			default:
@@ -103,6 +105,17 @@ func TableReply(update tgbotapi.Update, colSep string, cenSep string, reply [][]
 	table.Render()
 	TextReply(update, "<pre>"+tableString.String()+"</pre>")
 	//return "```"+tableString.String()+"```"
+}
+
+// TODO 因为表格在不同的设备屏幕大小中显示不一，这里需要改进，方案是给用户选择显示方式，是表格还是纯文字
+// 暂时不影响我使用，所以搁置。
+func PlainReply(update tgbotapi.Update, reply [][]string) {
+	rep := ""
+	for _, v := range reply {
+		rep += fmt.Sprintf("%s\n", strings.Join(v, " "))
+	}
+
+	TextReply(update, rep)
 }
 
 func Keyboard(update tgbotapi.Update) {

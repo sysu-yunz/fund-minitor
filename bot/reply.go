@@ -98,7 +98,8 @@ func Indices(update tgbotapi.Update) {
 
 	// prepend header
 	reply = append([][]string{{"%", "PRICE", "/", "NAME"}}, reply...)
-	TableReply(update, " ", "+", reply)
+	// TableReply(update, " ", "+", reply)
+	PlainReply(update, reply)
 }
 
 func Subscription(update tgbotapi.Update) {

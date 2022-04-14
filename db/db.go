@@ -507,3 +507,16 @@ func (c *MgoC) GetCookie() string {
 
 	return cookie.CookieStr
 }
+
+func (c *MgoC) InsertYTV(v []interface{}) {
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	col := c.Database("youtube").Collection("video")
+	_, err := col.InsertMany(ctx, v)
+	if err != nil {
+		log.Error("Inserting ytv %+v", err)
+	}
+
+	log.Info("Inserted ytv.")
+}
