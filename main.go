@@ -10,7 +10,7 @@ import (
 	"fund/global"
 	"fund/job"
 	"fund/log"
-	"io/ioutil"
+	"io"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -48,7 +48,11 @@ func main() {
 		port := config.EnvVariable("PORT")
 		fmt.Println("Server started on port:", port)
 		global.Bot.RemoveWebhook()
-		_, err = global.Bot.SetWebhook(tgbotapi.NewWebhook("https://thawing-scrubland-62700.herokuapp.com/" + global.Bot.Token))
+		whAddr := config.EnvVariable("WEBHOOK")
+		if whAddr == "" {
+			whAddr = "https://thawing-scrubland-62700.herokuapp.com/"
+		}
+		_, err = global.Bot.SetWebhook(tgbotapi.NewWebhook(whAddr + global.Bot.Token))
 		if err != nil {
 			log.Fatal("%v", err)
 		}
@@ -101,7 +105,7 @@ func generatePieItems() []opts.PieData {
 func webhookHandler(c *gin.Context) {
 	defer c.Request.Body.Close()
 
-	bytes, err := ioutil.ReadAll(c.Request.Body)
+	bytes, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		log.Error("%+v", err)
 		return
