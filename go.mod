@@ -6,7 +6,7 @@ require (
 	github.com/PuerkitoBio/goquery v1.6.1
 	github.com/chromedp/cdproto v0.0.0-20211130100048-e5358edf9020
 	github.com/chromedp/chromedp v0.7.6
-	github.com/gin-gonic/gin v1.7.4
+	github.com/gin-gonic/gin v1.7.7
 	github.com/globalsign/mgo v0.0.0-20181015135952-eeefdecb41b8
 	github.com/go-echarts/go-echarts/v2 v2.2.3
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible
@@ -22,16 +22,12 @@ require (
 
 require (
 	github.com/andybalholm/cascadia v1.1.0 // indirect
-	github.com/bitly/go-simplejson v0.5.0 // indirect
 	github.com/chromedp/sysutil v1.0.0 // indirect
-	github.com/dlclark/regexp2 v1.4.1-0.20201116162257-a2a8dda75c91 // indirect
-	github.com/dop251/goja v0.0.0-20211211112501-fb27c91c26ed // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-playground/locales v0.14.0 // indirect
 	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/go-playground/validator/v10 v10.9.0 // indirect
-	github.com/go-sourcemap/sourcemap v2.1.3+incompatible // indirect
 	github.com/go-stack/stack v1.8.0 // indirect
 	github.com/gobwas/httphead v0.1.0 // indirect
 	github.com/gobwas/pool v0.2.1 // indirect
@@ -41,7 +37,6 @@ require (
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/kkdai/youtube/v2 v2.7.10 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/konsorten/go-windows-terminal-sequences v1.0.3 // indirect
 	github.com/leodido/go-urn v1.2.1 // indirect
